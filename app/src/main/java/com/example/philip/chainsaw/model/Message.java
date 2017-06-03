@@ -1,12 +1,13 @@
 package com.example.philip.chainsaw.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by philip on 5/29/17.
  */
 
-public class Message {
+public class Message implements Serializable {
     private String messageText;
     private Date timeSent;
 

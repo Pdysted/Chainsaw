@@ -84,11 +84,11 @@ public class MessagesActivity extends AppCompatActivity {
                         }
                     });
                     if (i == matches.size()-1) {
-                        mAdapter = new MatchAdapter(getApplicationContext(), R.layout.message_item, matches);
+                        mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
                     }
                 }
 
-                mAdapter = new MatchAdapter(getApplicationContext(), R.layout.message_item, matches);
+                mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
                 mAdapter.registerDataSetObserver(new DataSetObserver() {
                     @Override
                     public void onChanged() {

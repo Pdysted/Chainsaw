@@ -20,8 +20,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 /**
- * Created by anders on 4/13/2016.
- * Meier: Prof Android 4, page 161
+ * Custom ArrayAdapter for ListView in MessagesActivity
  */
 public class MatchAdapter extends ArrayAdapter<Match> {
     private int resource;
@@ -60,7 +59,6 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         messageView.setText(message);
         String picUrl = item.getPhotoUrl();
         if (picUrl.equals("")) {
-
         } else {
             Picasso.with(context).load(item.getPhotoUrl()).into(picView);
         }

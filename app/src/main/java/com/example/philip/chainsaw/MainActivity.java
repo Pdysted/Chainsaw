@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         users = null;
 
         final TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
-        String token = "EAAGm0PX4ZCpsBAJZCijFZCDXnPitSVZB2TZCNnpke2HsVxHEbdNl92Px9hJzZCqVnkn5NvOzFyH1yIZBvDjWuqHoSpcTbrkuKZCVQXlzjFTIRB4HJruFWK7FfZCllG093WoE8KgITpV2y78YScmTu6R1uvG6yq7Lqi26AO53woyNo04E9ZBxTWaXL9iORkIXbQxzMLCI5N2dyzzZCXiZBuLsV2RVtF7poir7v5cO7dqRzN5melGCprK2lUh2lZCERoLiaqjQZD";
+        String token = "EAAGm0PX4ZCpsBAHJZAKbwl1x2uHy1w2Rq1XCbwZBxkSThCVq0MgeWIZAALypqvdFVOO6jwvXQUBZA2kxRfiZB9efLU50HkMUXqsmQyRnSQNguyiZCefSLwxRjIt5r8BYmIyVptNPJ6sbgGfjEmFo0oXum0HgdZC8oMJXMal0Fc9dzwGouwQLNiN3XlP3uM4MdGG2qHeSZArJP5Y4zcLJQfns2CPBmmTFSoftsINqx2PJ800bPwB9UbeV5UTo2ZC7oFsFgZD";
         tsv.auth(id, token, new TinderServiceVolley.CallBack() {
             @Override
             public void onSuccessAuth(final String token) {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                     xDifference = Math.abs(xDifference);
                     yDifference = Math.abs(yDifference);
                     if (xDifference > yDifference) {
-                        if (users != null) {
+                        if (users.size() > 0) {
                             Log.d("PDBug", "onFling: " + users.get(0).getName());
                             tsv.passUser(users.get(0).get_id(), tinderToken);
                             users.remove(0);

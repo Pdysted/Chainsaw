@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.InputQueue;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -67,7 +68,10 @@ public class TinderServiceVolley {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("PDBug", "onErrorResponse: "+error.toString());
+                        //If the Facebook token has expired when authenticating
+                        if (error.networkResponse.statusCode == 401) {
+                            Toast.makeText(context, "Authentication error: Facebook token expired", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }) {
         };
@@ -138,13 +142,15 @@ public class TinderServiceVolley {
     public void likeUser(String userId, final String tinderToken) {
         //userId = "58cb16dd5ac3aa7e03bc6b12";
         String url = "https://api.gotinder.com/like/"+userId;
-        ArrayList<String> result;
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     Log.d("PDBug", "onResponse: " + response.toString());
+                    if (response.getString("match").equals("true")) {
+                        Toast.makeText(context, "You matched!", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

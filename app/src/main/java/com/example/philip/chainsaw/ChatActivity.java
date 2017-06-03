@@ -18,7 +18,8 @@ public class ChatActivity extends AppCompatActivity {
         name = getIntent().getStringExtra("NAME");
         photoUrl = getIntent().getStringExtra("PHOTO_URL");
         messages = (ArrayList<Message>) getIntent().getSerializableExtra("MESSAGES");
-        Log.d("PDBug", "onCreate: "+name + " " + photoUrl + messages.size());
+        Log.d("PDBug", "onCreate: "+name + " " + photoUrl);
+        Log.d("PDBug", "onCreate: "+messages.size());
 
     }
 }

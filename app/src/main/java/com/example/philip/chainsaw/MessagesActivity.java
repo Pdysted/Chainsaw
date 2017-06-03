@@ -1,9 +1,12 @@
 package com.example.philip.chainsaw;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.philip.chainsaw.adapters.MatchAdapter;
@@ -24,6 +27,18 @@ public class MessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
         lw = (ListView) findViewById(R.id.messageList);
+        lw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Match m = (Match) parent.getAdapter().getItem(position);
+                Log.d("PDBug", "onItemClick: "+ m.getName());
+                Intent i = new Intent(getApplicationContext(), ChatActivity.class);
+                i.putExtra("NAME", m.getName());
+                i.putExtra("PHOTO_URL", m.getPhotoUrl());
+                i.putExtra("MESSAGES", m.getMessages());
+                startActivity(i);
+            }
+        });
         tinderToken = getIntent().getStringExtra("TINDER_TOKEN");
         tsv = new TinderServiceVolley(getApplicationContext());
         tsv.getMessages(tinderToken, new TinderServiceVolley.CallBack() {

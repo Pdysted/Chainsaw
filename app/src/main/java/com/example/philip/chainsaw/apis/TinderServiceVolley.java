@@ -242,7 +242,7 @@ public class TinderServiceVolley {
                         }
                         Match match = new Match(matchId, messages);
                         matches.add(match);
-                        Log.d("PDBug", "onResponseUserID: "+match.getUserId() + " length" + match.getUserId().length());
+                        //Log.d("PDBug", "onResponseUserID: "+match.getUserId() + " length" + match.getUserId().length());
                     }
 
                     Log.d("PDBug", "onResponseMatches: "+matches.size());
@@ -276,7 +276,7 @@ public class TinderServiceVolley {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.d("PDBug", "onResponseGetUser: " + response.toString());
+                    //Log.d("PDBug", "onResponseGetUser: " + response.toString());
                     JSONObject results = response.getJSONObject("results");
                     String name  = results.getString("name");
                     JSONArray photosArray = results.getJSONArray("photos");

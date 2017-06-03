@@ -1,5 +1,7 @@
 package com.example.philip.chainsaw.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -18,10 +20,6 @@ public class Match {
         this.messages = messages;
         this.name = "";
         this.photoUrl = "";
-    }
-
-    public void sortMessages() {
-
     }
 
     public String getUserId() {

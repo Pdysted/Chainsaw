@@ -40,7 +40,7 @@ public class MatchAdapter extends ArrayAdapter<Match> {
         Match item = getItem(position);
         String message = "No messages";
         if (item.getMessages().size() > 0) {
-            message = item.getMessages().get(0).getMessageText();
+            message = item.getMessages().get((item.getMessages().size()-1)).getMessageText();
         }
         LinearLayout itemView;
         if (convertView == null) {

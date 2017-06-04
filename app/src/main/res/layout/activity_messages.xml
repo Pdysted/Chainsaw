@@ -17,12 +17,14 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@mipmap/chat_menu"/>
+            android:src="@mipmap/chat_menu"
+            android:background="#01000000"/>
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginRight="110dp"
             android:src="@mipmap/recs_icon"
+            android:background="#01000000"
             android:onClick="goBack"/>
     </LinearLayout>
 

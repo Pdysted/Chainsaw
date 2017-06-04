@@ -4,14 +4,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.philip.chainsaw.ChatActivity">
 
-
-    <TextView
-        android:id="@+id/textChatTest"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp" />
+        tools:layout_editor_absoluteX="8dp">
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/back_arrow_ic"
+            android:background="#01000000"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/chatHeader_picIW"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="50dp"/>
+        <TextView
+            android:id="@+id/chatMatchNameTW"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:textStyle="bold"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/chat_menu_ic"
+            android:background="#01000000"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/chatList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:drawSelectorOnTop="false"></ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <EditText
+        android:id="@+id/messageFieldET"
+        android:hint="Send message"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_weight="1"/>
+
+     <ImageButton
+         android:id="@+id/sendMessageBtn"
+         android:layout_width="50dp"
+         android:layout_height="44dp"
+         android:src="@mipmap/send_message_ic"
+         android:onClick="sendMessage"/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

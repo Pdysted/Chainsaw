@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         users = null;
 
         final TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
-        String token = "EAAGm0PX4ZCpsBAHJZAKbwl1x2uHy1w2Rq1XCbwZBxkSThCVq0MgeWIZAALypqvdFVOO6jwvXQUBZA2kxRfiZB9efLU50HkMUXqsmQyRnSQNguyiZCefSLwxRjIt5r8BYmIyVptNPJ6sbgGfjEmFo0oXum0HgdZC8oMJXMal0Fc9dzwGouwQLNiN3XlP3uM4MdGG2qHeSZArJP5Y4zcLJQfns2CPBmmTFSoftsINqx2PJ800bPwB9UbeV5UTo2ZC7oFsFgZD";
+        String token = "EAAGm0PX4ZCpsBAACQufZB65xTndxyIuxs0poiQqQcQgvabbWYhhpidvrPXZAu6InsZCf2FEnuqRQTrl8hKtwv7Kxz2EYYKXZCtnb7wDZCkXEaiZCNV4a83ZAc8HrscfTiOZADjvEQoufHMrSvZA9eXBWygoNURAh3ZA8P5R3uOdyIHeEMeSKM9vddudBR3lBcvZBgZCQkyupCuddp22LEdksGRvAMuzqJUnsQivzhsbzgi8xKZCbyqSJyVnSSueHOiHB8yBDIZD";
         tsv.auth(id, token, new TinderServiceVolley.CallBack() {
             @Override
             public void onSuccessAuth(final String token) {

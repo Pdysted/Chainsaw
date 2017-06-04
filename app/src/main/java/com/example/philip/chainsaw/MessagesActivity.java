@@ -33,7 +33,9 @@ public class MessagesActivity extends AppCompatActivity {
                 Match m = (Match) parent.getAdapter().getItem(position);
                 Log.d("PDBug", "onItemClick: "+ m.getName());
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
+                i.putExtra("TINDER_TOKEN", tinderToken);
                 i.putExtra("NAME", m.getName());
+                i.putExtra("MATCH_ID", m.getUserId());
                 i.putExtra("PHOTO_URL", m.getPhotoUrl());
                 i.putExtra("MESSAGES", m.getMessages());
                 startActivity(i);
@@ -83,7 +85,7 @@ public class MessagesActivity extends AppCompatActivity {
 
                         }
                     });
-                    if (i == matches.size()-1) {
+                    if (i == (matches.size()-1)) {
                         mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
                     }
                 }

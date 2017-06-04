@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Message;
@@ -229,7 +230,8 @@ public class TinderServiceVolley {
                             //Build messages here
                             JSONObject messageJson = messagesJson.getJSONObject(j);
                             Date date = new Date(messageJson.getLong("timestamp"));
-                            Message message = new Message(messageJson.getString("message"), date);
+
+                            Message message = new Message(messageJson.getString("from"), messageJson.getString("message"), date);
                             messages.add(message);
                         }
                         //Matches are sorted depending on who likes first
@@ -270,17 +272,17 @@ public class TinderServiceVolley {
 
     public void getUser(final Match match, final String tinderToken, final CallBack onCallBack) {
         //userId = "582217b3b9de8ec50a5033a0";
-        String url = "https://api.gotinder.com/user/"+ match.getUserId();
+        String url = "https://api.gotinder.com/user/" + match.getUserId();
         //RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    //Log.d("PDBug", "onResponseGetUser: " + response.toString());
+                    Log.d("PDBug", "onResponseGetUser: " + response.toString());
                     JSONObject results = response.getJSONObject("results");
-                    String name  = results.getString("name");
+                    String name = results.getString("name");
                     JSONArray photosArray = results.getJSONArray("photos");
-                    String photoUrl = "http://images.gotinder.com/"+match.getUserId()+"/"+photosArray.getJSONObject(0).getString("fileName");
+                    String photoUrl = "http://images.gotinder.com/" + match.getUserId() + "/" + photosArray.getJSONObject(0).getString("fileName");
                     //Log.d("PDBug", "onResponsephotourl: "+photoUrl);
                     onCallBack.onSuccessUser(match, name, photoUrl);
                 } catch (Exception e) {
@@ -302,7 +304,38 @@ public class TinderServiceVolley {
             }
         };
         reqQueue.add(jsonObjRequest);
-        //return "Change this";
+    }
+
+    public void sendMessage(final String matchId, final String tinderToken, final String message) throws JSONException {
+        String url = "https://api.gotinder.com/user/matches/582217b3b9de8ec50a5033a0";
+        JSONObject messageJson = new JSONObject();
+        messageJson.put("message", message);
+        JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.POST, url, messageJson, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    Log.d("PDBug", "responseSendMessage: " + response.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("PDBug", "onErrorResponse: "+error.getMessage());
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-Auth-Token", tinderToken);
+                params.put("Content-Type", "application/json");
+                Log.d("PDBug", "getHeaders: " + params.toString());
+                return params;
+            }
+        };
+        reqQueue.add(jsonObjRequest);
     }
 
     public interface CallBack {

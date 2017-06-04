@@ -8,12 +8,22 @@ import java.util.Date;
  */
 
 public class Message implements Serializable {
+    private String senderId;
     private String messageText;
     private Date timeSent;
 
-    public Message(String messageText, Date timeSent) {
+    public Message(String senderId, String messageText, Date timeSent) {
+        this.senderId = senderId;
         this.messageText = messageText;
         this.timeSent = timeSent;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
     public String getMessageText() {

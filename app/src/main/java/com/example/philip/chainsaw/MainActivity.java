@@ -11,8 +11,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.philip.chainsaw.apis.TinderServiceVolley;
+import com.example.philip.chainsaw.interfaces.CallBack;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 import com.squareup.picasso.Picasso;
@@ -24,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView profilePic;
     private TextView userInfo;
     private ImageButton messagesButton;
-
 
     private int id = 1260393877;
     private SharedPreferences preferences;
@@ -51,15 +52,13 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = null;
-
-        final TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
-        String token = "EAAGm0PX4ZCpsBABOS2rk9WLGrAqWxLCKZAuBQilBGvV4cLUok5mj1dAIoxsVWZBcOT6GRdWQxi5TI8LM5xSAMdLhTFGa1V2ayY6HZCTvwAf1H8K2kPBzEHRAQ3yI3nZBZAZAJctlElApCWnoyQaeOv45KnDixH6DRXDLxLFjtz4s94ecicZBwZAtFdaDFR9jTAmTkGpWrt59oo34ely9PrHbWMP9uRbved5stLXwwTMrVXxZB2wZA2rhrSzXi9ZA0IjSVe0ZD";
-        tsv.auth(id, token, new TinderServiceVolley.CallBack() {
+        String token = "EAAGm0PX4ZCpsBAJ6YTj1mHg0scLVxIlDFYY9BiusJaUCayRb8gvsWAzgn4ukPuq7tNABZA9hKZC9XNi1HikqZCjizGPG4NFes2fYGxT4JwubZC6qvXjg60FZCOZAZCiswVmplQxZAIsG9VjqsDBI8b4u0kAZCAE5KdZAutSxt3tndvt28DWeNiZBpsOJ0ZAbcbycUFjXJhXGGZCFZAyWq3QoOsN3bZCwWlAUiZBX66QMqMF2J1s5PV93FuqGta8C74KA26b4wB7AZD";
+        TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
-            public void onSuccessAuth(final String token) {
+            public void onSuccessAuth(String token) {
                 setToken(token);
                 Log.d("PDBug", "onSuccessAuth: "+token);
-                tsv.getRecs(tinderToken, new TinderServiceVolley.CallBack() {
+                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
                     public void onSuccessAuth(String token) {
 
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
+
             @Override
             public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
 
@@ -104,37 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFail(String msg) {
-
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             }
         });
+
         Log.d("PDBug", "onCreate: "+tinderToken);
-        tsv.getRecs(tinderToken, new TinderServiceVolley.CallBack() {
-            @Override
-            public void onSuccessAuth(String token) {
-
-            }
-
-            @Override
-            public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-                setUsers(tinderUsers);
-            }
-
-            @Override
-            public void onSuccessMessages(ArrayList<Match> matches) {
-
-            }
-
-            @Override
-            public void onSuccessUser(Match match, String name, String photoUrl) {
-
-            }
-
-            @Override
-            public void onFail(String msg) {
-
-            }
-        });
-
 
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -161,43 +135,43 @@ public class MainActivity extends AppCompatActivity {
                     xDifference = Math.abs(xDifference);
                     yDifference = Math.abs(yDifference);
                     if (xDifference > yDifference) {
-                            if (users.size() > 0) {
-                                tsv.likeUser(users.get(0).get_id(), tinderToken);
-                                users.remove(0);
-                                if (users.size() > 1) {
-                                    Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
-                                    userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
-                                    Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                                } else {
-                                    Log.d("PDBug", "onFling: " + "Reloading");
-                                    tsv.getRecs(tinderToken, new TinderServiceVolley.CallBack() {
-                                        @Override
-                                        public void onSuccessAuth(String token) {
+                        if (users.size() > 0) {
+                            TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
+                            users.remove(0);
+                            if (users.size() > 1) {
+                                Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
+                                userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
+                                Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
+                            } else {
+                                Log.d("PDBug", "onFling: " + "Reloading");
+                                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
+                                    @Override
+                                    public void onSuccessAuth(String token) {
 
-                                        }
+                                    }
 
-                                        @Override
-                                        public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-                                            setUsers(tinderUsers);
-                                        }
+                                    @Override
+                                    public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
+                                        setUsers(tinderUsers);
+                                    }
 
-                                        @Override
-                                        public void onSuccessMessages(ArrayList<Match> matches) {
+                                    @Override
+                                    public void onSuccessMessages(ArrayList<Match> matches) {
 
-                                        }
+                                    }
 
-                                        @Override
-                                        public void onSuccessUser(Match match, String name, String photoUrl) {
+                                    @Override
+                                    public void onSuccessUser(Match match, String name, String photoUrl) {
 
-                                        }
+                                    }
 
-                                        @Override
-                                        public void onFail(String msg) {
+                                    @Override
+                                    public void onFail(String msg) {
 
-                                        }
-                                    });
-                                }
+                                    }
+                                });
                             }
+                        }
                     }
                 }
                 //Swiping left
@@ -224,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     if (xDifference > yDifference) {
                         if (users.size() > 0) {
                             Log.d("PDBug", "onFling: " + users.get(0).getName());
-                            tsv.passUser(users.get(0).get_id(), tinderToken);
+                            TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
                             users.remove(0);
                             Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
                             userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
@@ -235,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
                             } else {
                                 Log.d("PDBug", "onFling: " + "Reloading");
-                                tsv.getRecs(tinderToken, new TinderServiceVolley.CallBack() {
+                                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                                     @Override
                                     public void onSuccessAuth(String token) {
 
@@ -280,12 +254,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUsers(ArrayList<Rec> tinderUsers) {
         users = tinderUsers;
-        Rec d2 = users.get(0);
+        Rec firstRec = users.get(0);
         Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
-        userInfo.setText(d2.getName() + "\n"+d2.getBio());
-        Log.d("PDBug3", "setUsers: "+tinderUsers.size());
-        TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
-        tsv.likeUser(d2.get_id(), tinderToken);
+        userInfo.setText(firstRec.getName() + "\n"+firstRec.getBio());
+        Log.d("PDBug", "setUsers: "+tinderUsers.size());
     }
 
     public void goToMessages(View v) {

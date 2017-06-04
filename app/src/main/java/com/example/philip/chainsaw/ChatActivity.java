@@ -57,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    public void sendMessage(View v) {
+    /*public void sendMessage(View v) {
         TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
         String message = messageField.getText().toString();
         try {
@@ -65,7 +65,7 @@ public class ChatActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
         }
-    }
+    }*/
 
     public void backArrow(View v) {
         finish();

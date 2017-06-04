@@ -79,7 +79,7 @@ public class Post {
         /*TinderServiceRetrofit service = retrofit.create(TinderServiceRetrofit.class);
         Call<Response> ss = service.authUser(token, String.valueOf(id));
 
-        ss.enqueue(new Callback<ResponseBody>() {
+        ss.enqueue(new CallBack<ResponseBody>() {
                        @Override
                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                            Log.d("PDBug", "onResponse: " + response.toString());
@@ -91,7 +91,7 @@ public class Post {
                        }
                    });
         /*Call<Post> plc = service.getPost(1);
-        plc.enqueue(new Callback<Post>() {
+        plc.enqueue(new CallBack<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 int statusCode = response.code();
@@ -105,7 +105,7 @@ public class Post {
             }
         });
         Call<List<Post>> call = service.getPosts();
-        call.enqueue(new Callback<List<Post>>() {
+        call.enqueue(new CallBack<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
                 int statusCode = response.code();
@@ -123,7 +123,7 @@ public class Post {
         });
 
         Call<Post> postCall = service.createPost(post);
-        postCall.enqueue(new Callback<Post>() {
+        postCall.enqueue(new CallBack<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 int statusCode = response.code();

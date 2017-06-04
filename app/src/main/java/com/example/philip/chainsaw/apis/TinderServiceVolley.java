@@ -1,10 +1,7 @@
 package com.example.philip.chainsaw.apis;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
-import android.view.InputQueue;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -12,18 +9,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.philip.chainsaw.interfaces.CallBack;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Message;
 import com.example.philip.chainsaw.model.Rec;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,13 +30,30 @@ import java.util.Map;
  */
 
 public class TinderServiceVolley {
-    Context context;
+    //Can't be singleton as context is needed to instantiate the request queue
+    private static TinderServiceVolley mInstance;
+    private static Context context;
     RequestQueue reqQueue;
 
-    public TinderServiceVolley(Context context) {
+    private TinderServiceVolley(Context context) {
         this.context = context;
-        reqQueue = Volley.newRequestQueue(context);
+        reqQueue = getRequestQueue();
     }
+
+    public static synchronized TinderServiceVolley getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new TinderServiceVolley(context);
+        }
+        return mInstance;
+    }
+
+    public RequestQueue getRequestQueue() {
+        if (reqQueue == null) {
+            reqQueue = Volley.newRequestQueue(context.getApplicationContext());
+        }
+        return reqQueue;
+    }
+
 
     public void auth(int facebookId, String accessToken, final CallBack onCallBack) {
         String url = "https://api.gotinder.com/auth";
@@ -68,7 +81,7 @@ public class TinderServiceVolley {
                     public void onErrorResponse(VolleyError error) {
                         //If the Facebook token has expired when authenticating
                         if (error.networkResponse.statusCode == 401) {
-                            Toast.makeText(context, "Authentication error: Facebook token expired", Toast.LENGTH_SHORT).show();
+                            onCallBack.onFail("Authentication error: Facebook token expired");
                         }
                     }
                 }) {
@@ -133,7 +146,7 @@ public class TinderServiceVolley {
                 try {
                     Log.d("PDBug", "onResponse: " + response.toString());
                     if (response.getString("match").equals("true")) {
-                        Toast.makeText(context, "You matched!", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "You matched!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -308,17 +321,6 @@ public class TinderServiceVolley {
         reqQueue.add(jsonObjRequest);
     }
 
-    public interface CallBack {
-        void onSuccessAuth(String token);
-
-        void onSuccessRecs(ArrayList<Rec> tinderUsers);
-
-        void onSuccessMessages(ArrayList<Match> matches);
-
-        void onSuccessUser(Match match, String name, String photoUrl);
-
-        void onFail(String msg);
-    }
 
 
 }

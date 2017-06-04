@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.example.philip.chainsaw.adapters.MatchAdapter;
 import com.example.philip.chainsaw.apis.TinderServiceRetrofit;
 import com.example.philip.chainsaw.apis.TinderServiceVolley;
+import com.example.philip.chainsaw.interfaces.CallBack;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 
@@ -27,7 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MessagesActivity extends AppCompatActivity {
     private ListView lw;
     private String tinderToken;
-    TinderServiceVolley tsv;
     MatchAdapter mAdapter;
 
     @Override
@@ -50,8 +50,7 @@ public class MessagesActivity extends AppCompatActivity {
             }
         });
         tinderToken = getIntent().getStringExtra("TINDER_TOKEN");
-        tsv = new TinderServiceVolley(getApplicationContext());
-        tsv.getMessages(tinderToken, new TinderServiceVolley.CallBack() {
+        TinderServiceVolley.getInstance(getApplicationContext()).getMessages(tinderToken, new CallBack() {
             @Override
             public void onSuccessAuth(String token) {
 
@@ -65,7 +64,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             public void onSuccessMessages(ArrayList<Match> matches) {
                 for (int i = 0; i < matches.size(); i++) {
-                    tsv.getUser(matches.get(i), tinderToken, new TinderServiceVolley.CallBack() {
+                    TinderServiceVolley.getInstance(getApplicationContext()).getUser(matches.get(i), tinderToken, new CallBack() {
                         @Override
                         public void onSuccessAuth(String token) {
 
@@ -85,7 +84,6 @@ public class MessagesActivity extends AppCompatActivity {
                         public void onSuccessUser(Match match, String name, String photoUrl) {
                             match.setName(name);
                             match.setPhotoUrl(photoUrl);
-
                         }
 
                         @Override

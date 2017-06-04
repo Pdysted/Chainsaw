@@ -3,6 +3,8 @@ package com.example.philip.chainsaw.interfaces;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -10,13 +12,7 @@ import java.util.ArrayList;
  */
 
 public interface CallBack {
-        void onSuccessAuth(String token);
-
-        void onSuccessRecs(ArrayList<Rec> tinderUsers);
-
-        void onSuccessMessages(ArrayList<Match> matches);
-
-        void onSuccessUser(Match match, String name, String photoUrl);
+        void onSuccess(JSONObject response);
 
         void onFail(String msg);
 }

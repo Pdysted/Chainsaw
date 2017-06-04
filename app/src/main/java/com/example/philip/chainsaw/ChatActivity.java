@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         ListView lw = (ListView) findViewById(R.id.chatList);
         MessageAdapter mAdapter = new MessageAdapter(getApplicationContext(), R.layout.message_item, messages, photoUrl);
         lw.setAdapter(mAdapter);
-
+        lw.setSelection(mAdapter.getCount()-1);
     }
 
     /*public void sendMessage(View v) {

@@ -8,16 +8,14 @@ import java.util.ArrayList;
 
 public class Rec {
     private int distance_mi;
-    private int common_friend_count;
     private String _id;
     private String bio;
     private int gender;
     private String name;
     private ArrayList<String> photoUrls;
 
-    public Rec(int distance_mi, int common_friend_count, String _id, String bio, int gender, String name, ArrayList<String> photoUrls) {
+    public Rec(int distance_mi, String _id, String bio, int gender, String name, ArrayList<String> photoUrls) {
         this.distance_mi = distance_mi;
-        this.common_friend_count = common_friend_count;
         this._id = _id;
         this.bio = bio;
         this.gender = gender;
@@ -31,14 +29,6 @@ public class Rec {
 
     public void setDistance_mi(int distance_mi) {
         this.distance_mi = distance_mi;
-    }
-
-    public int getCommon_friend_count() {
-        return common_friend_count;
-    }
-
-    public void setCommon_friend_count(int common_friend_count) {
-        this.common_friend_count = common_friend_count;
     }
 
     public String get_id() {

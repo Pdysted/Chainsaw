@@ -14,9 +14,15 @@ import com.example.philip.chainsaw.apis.TinderServiceRetrofit;
 import com.example.philip.chainsaw.apis.TinderServiceVolley;
 import com.example.philip.chainsaw.interfaces.CallBack;
 import com.example.philip.chainsaw.model.Match;
+import com.example.philip.chainsaw.model.Message;
 import com.example.philip.chainsaw.model.Rec;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,6 +35,7 @@ public class MessagesActivity extends AppCompatActivity {
     private ListView lw;
     private String tinderToken;
     MatchAdapter mAdapter;
+    private ArrayList<Match> matches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,65 +57,11 @@ public class MessagesActivity extends AppCompatActivity {
             }
         });
         tinderToken = getIntent().getStringExtra("TINDER_TOKEN");
+        matches = new ArrayList<>();
         TinderServiceVolley.getInstance(getApplicationContext()).getMessages(tinderToken, new CallBack() {
             @Override
-            public void onSuccessAuth(String token) {
-
-            }
-
-            @Override
-            public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-
-            }
-
-            @Override
-            public void onSuccessMessages(ArrayList<Match> matches) {
-                for (int i = 0; i < matches.size(); i++) {
-                    TinderServiceVolley.getInstance(getApplicationContext()).getUser(matches.get(i), tinderToken, new CallBack() {
-                        @Override
-                        public void onSuccessAuth(String token) {
-
-                        }
-
-                        @Override
-                        public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-
-                        }
-
-                        @Override
-                        public void onSuccessMessages(ArrayList<Match> matches) {
-
-                        }
-
-                        @Override
-                        public void onSuccessUser(Match match, String name, String photoUrl) {
-                            match.setName(name);
-                            match.setPhotoUrl(photoUrl);
-                        }
-
-                        @Override
-                        public void onFail(String msg) {
-
-                        }
-                    });
-                    if (i == (matches.size()-1)) {
-                        mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
-                    }
-                }
-
-                mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
-                mAdapter.registerDataSetObserver(new DataSetObserver() {
-                    @Override
-                    public void onChanged() {
-                        update();
-                    }
-                });
-                lw.setAdapter(mAdapter);
-            }
-
-            @Override
-            public void onSuccessUser(Match match, String name, String photoUrl) {
-
+            public void onSuccess(JSONObject response) {
+                    addMatches(response);
             }
 
             @Override
@@ -135,6 +88,83 @@ public class MessagesActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    public void addMatches(JSONObject response) {
+        try {
+            JSONArray matchesJson = response.getJSONArray("matches");
+            for (int i = 0; i < matchesJson.length(); i++) {
+                JSONArray messagesJson = matchesJson.getJSONObject(i).getJSONArray("messages");
+                ArrayList<Message> messages = new ArrayList<>();
+                for (int j = 0; j < messagesJson.length(); j++) {
+                    //Build messages here
+                    JSONObject messageJson = messagesJson.getJSONObject(j);
+                    Date date = new Date(messageJson.getLong("timestamp"));
+
+                    Message message = new Message(messageJson.getString("from"), messageJson.getString("message"), date);
+                    messages.add(message);
+                }
+                //Matches are sorted depending on who likes first
+                //Check for my id within the first 24 characters and substring accordingly
+                String matchId = matchesJson.getJSONObject(i).getString("_id");
+                if (matchId.substring(0, 24).equals("58cb16dd5ac3aa7e03bc6b12")) {
+                    matchId = matchId.substring(24, 48);
+                } else {
+                    matchId = matchId.substring(0, 24);
+                }
+                Match match = new Match(matchId, messages);
+                matches.add(match);
+                //Log.d("PDBug", "onResponseUserID: "+match.getUserId() + " length" + match.getUserId().length());
+                //Scalable only 10 at a time and dynamically add to the adapter?
+                //Slow loading?
+                }
+            getUsers();
+            }   catch (JSONException ex) {
+            Log.d("PDBug", "getMatches: "+ex.getLocalizedMessage());
+        }
+    }
+
+    public void getUsers() {
+        for (int i = 0; i < matches.size(); i++) {
+            Log.d("PDBus", "getUsers: "+matches.size());
+            final int iterator = i;
+            TinderServiceVolley.getInstance(getApplicationContext()).getUser(matches.get(i), tinderToken, new CallBack() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        //Log.d("PDBug", "onResponseGetUser: " + response.toString());
+                        JSONObject results = response.getJSONObject("results");
+                        String name = results.getString("name");
+                        JSONArray photosArray = results.getJSONArray("photos");
+                        String photoUrl = "http://images.gotinder.com/" + matches.get(iterator).getUserId() + "/" + photosArray.getJSONObject(0).getString("fileName");
+                        matches.get(iterator).setName(name);
+                        matches.get(iterator).setPhotoUrl(photoUrl);
+                        //Log.d("PDBug", "onResponsephotourl: "+photoUrl);
+                    } catch (JSONException ex) {
+                        Log.d("PDBug", "addUser: "+ex.getLocalizedMessage());
+                    }
+                }
+
+                @Override
+                public void onFail(String msg) {
+
+                }
+            });
+            if (i == (matches.size()-1)) {
+                mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
+            }
+        }
+        mAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                update();
+            }
+        });
+        lw.setAdapter(mAdapter);
+    }
+
+    public void addUser(JSONObject response) {
 
     }
 

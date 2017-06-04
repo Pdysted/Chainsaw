@@ -20,6 +20,10 @@ import com.example.philip.chainsaw.model.Rec;
 import com.squareup.picasso.Picasso;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,32 +55,23 @@ public class MainActivity extends AppCompatActivity {
         });
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
-        users = null;
-        String token = "EAAGm0PX4ZCpsBAJ6YTj1mHg0scLVxIlDFYY9BiusJaUCayRb8gvsWAzgn4ukPuq7tNABZA9hKZC9XNi1HikqZCjizGPG4NFes2fYGxT4JwubZC6qvXjg60FZCOZAZCiswVmplQxZAIsG9VjqsDBI8b4u0kAZCAE5KdZAutSxt3tndvt28DWeNiZBpsOJ0ZAbcbycUFjXJhXGGZCFZAyWq3QoOsN3bZCwWlAUiZBX66QMqMF2J1s5PV93FuqGta8C74KA26b4wB7AZD";
+        users = new ArrayList<>();
+        String token = "EAAGm0PX4ZCpsBAP6Tr8TTzt3aupAyOLUbyqNMFLjKAl9UvZBpZCWk3lGXjncgnqvDd8n2YHw6FvZA7V3TJ16OgH45KYdF1ZBiBXIVkbivuP40EVdG8gFJLzSWZBc7UTRb7yt8fvHKYk1L0ODvcRlERqLMz8daYolUfDs7pkZBHad2WfFWmeZCBeno3nIWAoQkufm4l7sieFLIxTpZCEJ1FvVgXnRbLXvIVNcbn7xhfY3BUaippgvP9lm7DDqhzKOwGEgZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
-            public void onSuccessAuth(String token) {
-                setToken(token);
+            public void onSuccess(JSONObject response) {
+                String token = null;
+                try {
+                    token = response.getString("token");
+                    setToken(token);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Log.d("PDBug", "onSuccessAuth: "+token);
                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
-                    public void onSuccessAuth(String token) {
-
-                    }
-
-                    @Override
-                    public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-                        setUsers(tinderUsers);
-                    }
-
-                    @Override
-                    public void onSuccessMessages(ArrayList<Match> matches) {
-
-                    }
-
-                    @Override
-                    public void onSuccessUser(Match match, String name, String photoUrl) {
-
+                    public void onSuccess(JSONObject response) {
+                            addUsers(response);
                     }
 
                     @Override
@@ -84,22 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-            }
-
-
-            @Override
-            public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-
-            }
-
-            @Override
-            public void onSuccessMessages(ArrayList<Match> matches) {
-
-            }
-
-            @Override
-            public void onSuccessUser(Match match, String name, String photoUrl) {
-
             }
 
             @Override
@@ -146,23 +125,8 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("PDBug", "onFling: " + "Reloading");
                                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                                     @Override
-                                    public void onSuccessAuth(String token) {
-
-                                    }
-
-                                    @Override
-                                    public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-                                        setUsers(tinderUsers);
-                                    }
-
-                                    @Override
-                                    public void onSuccessMessages(ArrayList<Match> matches) {
-
-                                    }
-
-                                    @Override
-                                    public void onSuccessUser(Match match, String name, String photoUrl) {
-
+                                    public void onSuccess(JSONObject response) {
+                                            addUsers(response);
                                     }
 
                                     @Override
@@ -211,23 +175,8 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("PDBug", "onFling: " + "Reloading");
                                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                                     @Override
-                                    public void onSuccessAuth(String token) {
-
-                                    }
-
-                                    @Override
-                                    public void onSuccessRecs(ArrayList<Rec> tinderUsers) {
-                                        setUsers(tinderUsers);
-                                    }
-
-                                    @Override
-                                    public void onSuccessMessages(ArrayList<Match> matches) {
-
-                                    }
-
-                                    @Override
-                                    public void onSuccessUser(Match match, String name, String photoUrl) {
-
+                                    public void onSuccess(JSONObject response) {
+                                        addUsers(response);
                                     }
 
                                     @Override
@@ -252,12 +201,33 @@ public class MainActivity extends AppCompatActivity {
         Log.d("PDBug", "setToken: " + token);
     }
 
-    public void setUsers(ArrayList<Rec> tinderUsers) {
-        users = tinderUsers;
+    public void addUsers(JSONObject jsonResponse) {
+        try {
+            JSONArray jsonUsers = jsonResponse.getJSONArray("results");
+            for (int i = 0; i < jsonUsers.length(); i++) {
+                JSONObject jsonObj = jsonUsers.getJSONObject(i);
+                ArrayList<String> photosUrls = new ArrayList<>();
+                JSONArray photosArray = jsonObj.getJSONArray("photos");
+                for (int j = 0; j < photosArray.length(); j++) {
+                    JSONObject photoJson = photosArray.getJSONObject(j);
+                    photosUrls.add(photoJson.getString("url"));
+                    //Log.d("PDBug", "photoArray: " + photoJson.getString("url"));
+                }
+                Rec user = new Rec(jsonObj.getInt("distance_mi"), jsonObj.getString("_id"), jsonObj.getString("bio"),
+                        jsonObj.getInt("gender"), jsonObj.getString("name"), photosUrls);
+                users.add(user);
+            }
+            setUsers();
+        } catch (JSONException ex) {
+            Log.d("PDBug", "addUsers: "+ex.getLocalizedMessage());
+        }
+    }
+
+    public void setUsers() {
         Rec firstRec = users.get(0);
         Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
         userInfo.setText(firstRec.getName() + "\n"+firstRec.getBio());
-        Log.d("PDBug", "setUsers: "+tinderUsers.size());
+        Log.d("PDBug", "setUsers: "+users.size());
     }
 
     public void goToMessages(View v) {

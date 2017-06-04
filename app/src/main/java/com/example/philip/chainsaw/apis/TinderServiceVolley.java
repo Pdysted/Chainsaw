@@ -48,18 +48,15 @@ public class TinderServiceVolley {
         params.put("facebook_token", accessToken);
         params.put("facebook_id", String.valueOf(facebookId));
         JSONObject jsonObject = new JSONObject(params);
-        RequestQueue queue = Volley.newRequestQueue(context);
         final JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("PDBug", "onResponse: " + response.toString());
-
                         try {
                             JSONObject jsonObj = new JSONObject(response.toString());
                             String tinderToken = jsonObj.getString("token");
                             Log.d("PDBug", "onResponse: " + tinderToken);
-                            //getRecs();
                             onCallBack.onSuccessAuth(tinderToken);
                         } catch (JSONException e) {
                             Log.d("PDBug", "onResponse: "+e.getLocalizedMessage());
@@ -76,26 +73,15 @@ public class TinderServiceVolley {
                     }
                 }) {
         };
-        queue.add(jsonObjRequest);
+        reqQueue.add(jsonObjRequest);
     }
 
-
-    //Change void return type to the user object
-    public ArrayList<Rec> getRecs(final String tinderToken, final CallBack onCallBack) {
+    public void getRecs(final String tinderToken, final CallBack onCallBack) {
         String url = "https://api.gotinder.com/user/recs";
-        ArrayList<Rec> result;
-        RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    /*int maxLogSize = 1000;
-                    for(int i = 0; i <= response.toString().length() / maxLogSize; i++) {
-                        int start = i * maxLogSize;
-                        int end = (i+1) * maxLogSize;
-                        end = end > response.toString().length() ? response.toString().length() : end;
-                        Log.v("PDBug", response.toString().substring(start, end));
-                    }*/
                     ArrayList<Rec> tinderUsers = new ArrayList<>();
                     JSONArray users = response.getJSONArray("results");
                     for (int i = 0; i < users.length(); i++) {
@@ -114,7 +100,6 @@ public class TinderServiceVolley {
                         tinderUsers.add(user);
                     }
                     onCallBack.onSuccessRecs(tinderUsers);
-
                     //Log.d("PDBug", "onResponse: " + users.getJSONObject(0).getJSONArray("photos").getJSONObject(0).getString("url"));
                     //Log.d("PDBug", "onResponse: " + users.getJSONObject(0).getJSONArray("photos").getJSONObject(0).getJSONArray("processedFiles").toString());
                     //Log.d("PDBug", "onResponsesss: "+ users.getJSONObject(0).getString("name"));
@@ -136,14 +121,12 @@ public class TinderServiceVolley {
                 return params;
             }
         };
-        queue.add(jsonObjRequest);
-        return null;
+        reqQueue.add(jsonObjRequest);
     }
 
     public void likeUser(String userId, final String tinderToken) {
         //userId = "58cb16dd5ac3aa7e03bc6b12";
         String url = "https://api.gotinder.com/like/"+userId;
-        RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -172,15 +155,11 @@ public class TinderServiceVolley {
                 return params;
             }
         };
-
-        queue.add(jsonObjRequest);
-        //return "Change this";
+        reqQueue.add(jsonObjRequest);
     }
 
     public void passUser(String userId, final String tinderToken) {
         String url = "https://api.gotinder.com/pass/"+userId;
-        ArrayList<String> result;
-        RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -204,23 +183,15 @@ public class TinderServiceVolley {
                 return params;
             }
         };
-        queue.add(jsonObjRequest);
-        //return "Change this";
+        reqQueue.add(jsonObjRequest);
     }
 
     public void getMessages(final String tinderToken, final CallBack onCallBack) {
         String url = "https://api.gotinder.com/updates";
-        //RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    //Log.d("PDBug", "onResponseMessages: " + response.toString());
-                    //Log.d("PDBug", "onResponseMessages: " + response.toString().length());
-                    /*
-                    Returns JSONObject containing an JSON array matches
-                    each match JSONObject contains an JSON array messages
-                     */
                     JSONArray matchesJson = response.getJSONArray("matches");
                     ArrayList<Match> matches = new ArrayList<>();
                     for (int i = 0; i < matchesJson.length() ; i++) {
@@ -273,7 +244,6 @@ public class TinderServiceVolley {
     public void getUser(final Match match, final String tinderToken, final CallBack onCallBack) {
         //userId = "582217b3b9de8ec50a5033a0";
         String url = "https://api.gotinder.com/user/" + match.getUserId();
-        //RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -349,5 +319,6 @@ public class TinderServiceVolley {
 
         void onFail(String msg);
     }
+
 
 }

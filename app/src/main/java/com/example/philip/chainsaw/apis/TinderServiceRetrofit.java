@@ -1,5 +1,6 @@
 package com.example.philip.chainsaw.apis;
 
+import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.test.Post;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -41,4 +43,7 @@ public interface TinderServiceRetrofit {
 
     @POST("pass/{_id}")
     Call<ResponseBody> passUser(@Path("_id") String id);
+
+    @POST("updates")
+    Call<List<Match>> getMessages(@Header("X-Auth-Token") String tinderToken);
 }

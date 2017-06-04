@@ -17,7 +17,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@mipmap/back_arrow_ic"
-            android:background="#01000000"/>
+            android:background="#01000000"
+            android:onClick="backArrow"/>
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/chatHeader_picIW"

@@ -66,4 +66,8 @@ public class ChatActivity extends AppCompatActivity {
             Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
         }
     }
+
+    public void backArrow(View v) {
+        finish();
+    }
 }

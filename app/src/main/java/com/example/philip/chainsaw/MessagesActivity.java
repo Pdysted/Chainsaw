@@ -10,11 +10,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.philip.chainsaw.adapters.MatchAdapter;
+import com.example.philip.chainsaw.apis.TinderServiceRetrofit;
 import com.example.philip.chainsaw.apis.TinderServiceVolley;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MessagesActivity extends AppCompatActivity {
     private ListView lw;
@@ -110,6 +118,25 @@ public class MessagesActivity extends AppCompatActivity {
 
             }
         });
+
+        Retrofit builder = new Retrofit.Builder().baseUrl("https://api.gotinder.com/")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+
+        TinderServiceRetrofit tsr = builder.create(TinderServiceRetrofit.class);
+
+        Call<List<Match>> matches = tsr.getMessages("octocat");
+        matches.enqueue(new Callback<List<Match>>() {
+            @Override
+            public void onResponse(Call<List<Match>> call, Response<List<Match>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Match>> call, Throwable t) {
+
+            }
+        });
+
 
     }
 

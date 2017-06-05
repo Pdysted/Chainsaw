@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAP6Tr8TTzt3aupAyOLUbyqNMFLjKAl9UvZBpZCWk3lGXjncgnqvDd8n2YHw6FvZA7V3TJ16OgH45KYdF1ZBiBXIVkbivuP40EVdG8gFJLzSWZBc7UTRb7yt8fvHKYk1L0ODvcRlERqLMz8daYolUfDs7pkZBHad2WfFWmeZCBeno3nIWAoQkufm4l7sieFLIxTpZCEJ1FvVgXnRbLXvIVNcbn7xhfY3BUaippgvP9lm7DDqhzKOwGEgZD";
+        String token = "EAAGm0PX4ZCpsBAGZBea7Eu8NHoWfAR0yS7IqZBttCXF3KUJnhMtIDM9x2MoiRouadg4n2uMW1DzSClZA9fZC0kVSZCpZBrCri5ji1ZB8hNcjnB9jDRy8HVtIFxAtFQLiFjQlqBBg7ZC7TKZAzwylOhjIl8qo7cMWSZCNTtlvssgchLJL3qoJGEsplPjbwkjpCUfExo5YsZCin0fR05LvJASVHi5V0YVmDCBkSQm8BYarr87RSvXKvRfsZAiNTKZByXHkEgUh4ZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {

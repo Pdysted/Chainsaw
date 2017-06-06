@@ -2,6 +2,7 @@ package com.example.philip.chainsaw;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.example.philip.chainsaw.interfaces.CallBack;
 import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 
 import org.json.JSONArray;
@@ -25,6 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView profilePic;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     String tinderToken;
     ArrayList<Rec> users;
+
     private GestureDetector gestureDetector;
 
     @Override
@@ -56,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAGZBea7Eu8NHoWfAR0yS7IqZBttCXF3KUJnhMtIDM9x2MoiRouadg4n2uMW1DzSClZA9fZC0kVSZCpZBrCri5ji1ZB8hNcjnB9jDRy8HVtIFxAtFQLiFjQlqBBg7ZC7TKZAzwylOhjIl8qo7cMWSZCNTtlvssgchLJL3qoJGEsplPjbwkjpCUfExo5YsZCin0fR05LvJASVHi5V0YVmDCBkSQm8BYarr87RSvXKvRfsZAiNTKZByXHkEgUh4ZD";
+        String token = "EAAGm0PX4ZCpsBAP9Q2uZCiOIfpZAAe6woDpqeubQD9sQF9pfkzuyse2J29gzQUSovvV7vQMe5q2T02fESQvq9mZCe5mNXWCb7gyMLjNZBgs6EdYdhoFEjLT7lK2Wrt0JowA2hg4JZA1vddD3xHnanrKd96R7HZA18ZBZCI4mC2Uzutzx8hZC0GaNmo7L4ifqVx6IQhIe2wN8SI61khGWnzW6MBCXQdCjZBgGS0UOXe6cCpgafwNep4kcqJZAKhtVsnRZALbcZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -225,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUsers() {
         Rec firstRec = users.get(0);
-        Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
+        Picasso.with(getApplicationContext()).load(firstRec.getPhotoUrls().get(0)).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
         userInfo.setText(firstRec.getName() + "\n"+firstRec.getBio());
         Log.d("PDBug", "setUsers: "+users.size());
     }

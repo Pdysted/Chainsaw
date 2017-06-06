@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAP9Q2uZCiOIfpZAAe6woDpqeubQD9sQF9pfkzuyse2J29gzQUSovvV7vQMe5q2T02fESQvq9mZCe5mNXWCb7gyMLjNZBgs6EdYdhoFEjLT7lK2Wrt0JowA2hg4JZA1vddD3xHnanrKd96R7HZA18ZBZCI4mC2Uzutzx8hZC0GaNmo7L4ifqVx6IQhIe2wN8SI61khGWnzW6MBCXQdCjZBgGS0UOXe6cCpgafwNep4kcqJZAKhtVsnRZALbcZD";
+        String token = "EAAGm0PX4ZCpsBAE8NWr1pZBxegZCAl5WnHxWO32O1rfi8QxV5IGLyyf0fZB5UkY3QIsRVeREBl2ZA61gDX5w2Xwl1VUjYv7t42f1aL6NEJMbdM9zJswfyJqCeHFtntYFWq6Ti9KZBDa9O96OjBtpSs6DjQLeiMGQ7NKxqptAUEgVwoOIhtazIfNrzp6vQGkDIOs32WFLxhPkfb3UDiTT96omCpOK1IgTDgRZC9ZBEsB5BILzAqxis6kMSgXGJuzfdjIZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -123,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
                             TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
                             users.remove(0);
                             if (users.size() > 1) {
-                                Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
-                                userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
+                                setUsers();
                                 Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
                             } else {
                                 Log.d("PDBug", "onFling: " + "Reloading");
@@ -169,12 +168,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("PDBug", "onFling: " + users.get(0).getName());
                             TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
                             users.remove(0);
-                            Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
-                            userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
                             Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
                             if (users.size() > 1) {
-                                Picasso.with(getApplicationContext()).load(users.get(0).getPhotoUrls().get(0)).into(profilePic);
-                                userInfo.setText(users.get(0).getName() + "\n" + users.get(0).getBio());
+                                setUsers();
                                 Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
                             } else {
                                 Log.d("PDBug", "onFling: " + "Reloading");

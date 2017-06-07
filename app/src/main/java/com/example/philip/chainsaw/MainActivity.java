@@ -26,7 +26,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -61,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAE8NWr1pZBxegZCAl5WnHxWO32O1rfi8QxV5IGLyyf0fZB5UkY3QIsRVeREBl2ZA61gDX5w2Xwl1VUjYv7t42f1aL6NEJMbdM9zJswfyJqCeHFtntYFWq6Ti9KZBDa9O96OjBtpSs6DjQLeiMGQ7NKxqptAUEgVwoOIhtazIfNrzp6vQGkDIOs32WFLxhPkfb3UDiTT96omCpOK1IgTDgRZC9ZBEsB5BILzAqxis6kMSgXGJuzfdjIZD";
+        String token = "EAAGm0PX4ZCpsBAC3skUAknnuMpStWG6VxFThiAFJhLlFaSNsMrFDZCXDKkriNeGwgoNJQM3kcZAu7JQmkV4LsZAP6Ea52jOrpDD4fc9YLy0ZCYkXeD4rp3j5RE4MHTcYccNrgz2zQEpyVob36EF7bluO40oaSJjYkUlpmWWkQ4uZBv5tZBAPgTXbuafmluqok93gVeqysLQDMWB9r9Co9yQI0kMZCgYxFjatQF0jbshZCpAlQeIWqCZCr4H9e4V7HuQ8UZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addUsers(JSONObject jsonResponse) {
         try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             JSONArray jsonUsers = jsonResponse.getJSONArray("results");
             for (int i = 0; i < jsonUsers.length(); i++) {
                 JSONObject jsonObj = jsonUsers.getJSONObject(i);
@@ -214,20 +219,25 @@ public class MainActivity extends AppCompatActivity {
                     photosUrls.add(photoJson.getString("url"));
                     //Log.d("PDBug", "photoArray: " + photoJson.getString("url"));
                 }
+                Log.d("PDBug", "addUsers: "+jsonObj.getString("birth_date"));
+                Date birthDay = df.parse(jsonObj.getString("birth_date"));
                 Rec user = new Rec(jsonObj.getInt("distance_mi"), jsonObj.getString("_id"), jsonObj.getString("bio"),
-                        jsonObj.getInt("gender"), jsonObj.getString("name"), photosUrls);
+                        birthDay, jsonObj.getInt("gender"), jsonObj.getString("name"), photosUrls);
                 users.add(user);
             }
             setUsers();
-        } catch (JSONException ex) {
-            Log.d("PDBug", "addUsers: "+ex.getLocalizedMessage());
+        } catch (ParseException ex) {
+              Log.d("PDBug", "addUsersParse: "+ex.getLocalizedMessage());
+        } catch(JSONException ex) {
+            Log.d("PDBug", "addUsersJSON: "+ex.getLocalizedMessage());
         }
     }
 
     public void setUsers() {
         Rec firstRec = users.get(0);
         Picasso.with(getApplicationContext()).load(firstRec.getPhotoUrls().get(0)).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
-        userInfo.setText(firstRec.getName() + "\n"+firstRec.getBio());
+        userInfo.setText(firstRec.getName() + " " + firstRec.getAge() + "\n"+firstRec.getBio());
+        firstRec.getAge();
         Log.d("PDBug", "setUsers: "+users.size());
     }
 

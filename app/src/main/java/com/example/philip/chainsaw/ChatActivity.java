@@ -1,6 +1,7 @@
 package com.example.philip.chainsaw;
 
 
+import android.database.DataSetObserver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -26,12 +28,15 @@ public class ChatActivity extends AppCompatActivity {
     private TextView headerName;
     private EditText messageField;
     private ImageButton sendMessageButton;
+    private ListView lw;
 
+    private final String ownId = "58cb16dd5ac3aa7e03bc6b12";
     private String tinderToken;
     private String name;
     private String matchId;
     private String photoUrl;
     private ArrayList<Message> messages;
+    private MessageAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +56,24 @@ public class ChatActivity extends AppCompatActivity {
         Log.d("PDBug", "onCreate: "+name + " " + photoUrl);
         Log.d("PDBug", "onCreate: "+messages.size());
 
-        ListView lw = (ListView) findViewById(R.id.chatList);
-        MessageAdapter mAdapter = new MessageAdapter(getApplicationContext(), R.layout.message_item, messages, photoUrl);
+        lw = (ListView) findViewById(R.id.chatList);
+        mAdapter = new MessageAdapter(getApplicationContext(), R.layout.message_item, messages, photoUrl);
+        mAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                update();
+            }
+        });
         lw.setAdapter(mAdapter);
         lw.setSelection(mAdapter.getCount()-1);
+    }
+
+    public void sendMessage(View v) {
+        String text = messageField.getText().toString();
+        Message message = new Message(ownId, text, new Date(System.currentTimeMillis()));
+        messages.add(message);
+        mAdapter.notifyDataSetChanged();
+        Log.d("PDBug", "sendMessage: ");
     }
 
     /*public void sendMessage(View v) {
@@ -66,6 +85,10 @@ public class ChatActivity extends AppCompatActivity {
             Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
         }
     }*/
+    public void update() {
+        lw.setAdapter(mAdapter);
+        lw.setSelection(mAdapter.getCount()-1);
+    }
 
     public void backArrow(View v) {
         finish();

@@ -15,14 +15,14 @@
         android:layoutDirection="rtl"
         android:background="@color/colorPrimary">
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:src="@mipmap/chat_menu"
             android:background="#01000000"
             android:onClick="goToMessages"/>
         <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_marginRight="110dp"
             android:src="@mipmap/recs_icon"
             android:background="#01000000"/>

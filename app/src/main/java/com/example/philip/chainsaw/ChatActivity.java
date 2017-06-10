@@ -73,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
         Message message = new Message(ownId, text, new Date(System.currentTimeMillis()));
         messages.add(message);
         mAdapter.notifyDataSetChanged();
+        messageField.setText("");
         Log.d("PDBug", "sendMessage: ");
     }
 

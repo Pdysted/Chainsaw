@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAC3skUAknnuMpStWG6VxFThiAFJhLlFaSNsMrFDZCXDKkriNeGwgoNJQM3kcZAu7JQmkV4LsZAP6Ea52jOrpDD4fc9YLy0ZCYkXeD4rp3j5RE4MHTcYccNrgz2zQEpyVob36EF7bluO40oaSJjYkUlpmWWkQ4uZBv5tZBAPgTXbuafmluqok93gVeqysLQDMWB9r9Co9yQI0kMZCgYxFjatQF0jbshZCpAlQeIWqCZCr4H9e4V7HuQ8UZD";
+        String token = "EAAGm0PX4ZCpsBAPoXtZA3SvsA8v7nl364oXRNfB25ruMM28uX76E0P0Fdn8HIgvS9hAUAk2H7MHCCk52SniRkJu1TZCwzl4aQiScH8bIdDg4cg0M48Uylwv6FhmOZAKZBggnMfxhdvmdVyZBMn9zPkV5d9GN6toXr8DQdmZAEUzBc4eB9zB3rq2uCTzwwgW0PcQM0B0c6SRYNZAj9Yt76pZCQlrUeDqoaz0hpJb6ZA0bcj5hj01RPsAxDmZBCK7MT9oLn4ZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -99,6 +99,17 @@ public class MainActivity extends AppCompatActivity {
         Log.d("PDBug", "onCreate: "+tinderToken);
 
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                Intent i = new Intent(getApplicationContext(), UserActivity.class);
+                i.putExtra("NAME", users.get(0).getName());
+                i.putExtra("AGE", users.get(0).getAge());
+                i.putExtra("BIO", users.get(0).getBio());
+                i.putExtra("PHOTOS", users.get(0).getPhotoUrls());
+                startActivity(i);
+                return false;
+            }
+
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 //Swiping right
@@ -236,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
     public void setUsers() {
         Rec firstRec = users.get(0);
         Picasso.with(getApplicationContext()).load(firstRec.getPhotoUrls().get(0)).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
-        userInfo.setText(firstRec.getName() + " " + firstRec.getAge() + "\n"+firstRec.getBio());
+        userInfo.setText(firstRec.getName() + " " + firstRec.getAge());
         firstRec.getAge();
         Log.d("PDBug", "setUsers: "+users.size());
     }

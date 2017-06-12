@@ -5,12 +5,15 @@ import android.content.SharedPreferences;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView profilePic;
     private TextView userInfo;
     private ImageButton messagesButton;
+    private LinearLayout profileLayout;
 
     private int id = 1260393877;
     private SharedPreferences preferences;
@@ -45,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREF_TOKEN = "Token";
     public static final int USER_ACTIVITY = 3;
 
+    private float layoutX;
+    private float layoutY;
+    float dX, dY;
     String tinderToken;
     ArrayList<Rec> users;
 
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAOOAOtCarop4VJ4YAAQGU6A4OyFlmxihulodnzkatreR0wsisiZCKcWhqXaTWxGfivtkAZCpfayBYzX0VO2RsaRmriOp7KRYhZBeXYdo924tpuxrZAEtqX19tNh0lEfGH6VU9B5xXfjfasm614aXDdKJpKtNdWBjZA1YDqsMSCXTX30WZBa9Tt4J2ZCizA2Eqeek37K758VdRfyiSR8J7OBZCzSnvgW9UsQ4MHKKikVlDuZCgsVKlSqgZD";
+        String token = "EAAGm0PX4ZCpsBADo2dr0R7j2O6pIZAYY7NS7xayTGfBZCw22ZByQldpvtuXxtY2zaqnffonsgUWorZBB1XuqE8PGCvMx2HohmIYURIBgBy66FzhLgDKUgiAn5ksr8aIYMbEngWZCnQsNwOLCXQplc4OUDjg4rGnZACFIh9ubZBYsXR8mRt46IHJTw98xkKhGvwm8R33Y4yxqjcbkZBkZCehrXANh1g3XfMdXaUWYDTqb4KFucpuIeWtyt4lklRtZBzZCrdIZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -96,6 +103,93 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             }
         });
+        profileLayout = (LinearLayout) findViewById(R.id.ss);
+        layoutX = profileLayout.getX();
+        layoutY = profileLayout.getY();
+        profileLayout.setZ(-1);
+        //TODO using a stacked stackview and having multiple layouts stacked would allow to "remove" it instead of the animation going back
+        profileLayout.setOnTouchListener(new View.OnTouchListener() {
+                                      @Override
+                                      public boolean onTouch(View view, MotionEvent event) {
+
+                                          switch (event.getAction()) {
+
+
+                                              case MotionEvent.ACTION_DOWN:
+                                                  dX = view.getX() - event.getRawX();
+                                                  break;
+
+                                              case MotionEvent.ACTION_MOVE:
+
+                                                  view.animate()
+                                                          .x(event.getRawX() + dX)
+                                                          .setDuration(0)
+                                                          .start();
+
+                                                  int viewX = (int)view.getX();
+                                                  if (viewX > 240) {
+                                                      Log.d("PDBug", "onTouch: right");
+                                                      view.animate().x(layoutX+35).setDuration(100).start();
+                                                      if (users.size() > 0) {
+                                                          TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
+                                                          users.remove(0);
+                                                          if (users.size() > 1) {
+                                                              setUsers();
+                                                              Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
+                                                          } else {
+                                                              Log.d("PDBug", "onFling: " + "Reloading");
+                                                              TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
+                                                                  @Override
+                                                                  public void onSuccess(JSONObject response) {
+                                                                      addUsers(response);
+                                                                  }
+
+                                                                  @Override
+                                                                  public void onFail(String msg) {
+
+                                                                  }
+                                                              });
+                                                          }
+                                                      }
+                                                  }
+                                                  if (viewX < -240) {
+                                                      Log.d("PDBug", "onTouch: left");
+                                                      view.animate().x(layoutX+35).setDuration(100).start();
+                                                      if (users.size() > 0) {
+                                                          Log.d("PDBug", "onFling: " + users.get(0).getName());
+                                                          TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
+                                                          users.remove(0);
+                                                          if (users.size() > 1) {
+                                                              setUsers();
+                                                              Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
+                                                          } else {
+                                                              Log.d("PDBug", "onFling: " + "Reloading");
+                                                              TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
+                                                                  @Override
+                                                                  public void onSuccess(JSONObject response) {
+                                                                      addUsers(response);
+                                                                  }
+
+                                                                  @Override
+                                                                  public void onFail(String msg) {
+
+                                                                  }
+                                                              });
+                                                          }
+                                                      }
+                                                  }
+                                                  break;
+                                              case MotionEvent.ACTION_UP:
+                                                  //view.animate().x(layoutX+35).setDuration(100).start();
+                                                  break;
+                                              default:
+                                                  view.animate().x(layoutX+35).setDuration(100).start();
+                                                  return false;
+                                          }
+                                          return true;
+                                      }
+
+        } );
 
         Log.d("PDBug", "onCreate: "+tinderToken);
 
@@ -111,102 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
 
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                //Swiping right
-                Log.d("PDBug", "Swiping");
-                if (e1.getX() < e2.getX()) {
-                    Log.d("PDBug", "Swiping right");
-                    float xDifference = e2.getX() - e1.getX();
-                    float yDifference = (float) 0.0;
-                    //If the user is swiping downwards
-                    if (e2.getY() > e1.getY()) {
-                        yDifference = e2.getY() - e1.getY();
-                        Log.d("PDBug", "Swiping down");
-                    }
-                    //Check if the user is swiping upwards
-                    if (e2.getY() < e1.getY()) {
-                        yDifference = e2.getY() - e1.getY();
-                        Log.d("PDBug", "Swiping up");
-                    }
 
-                    //Checks if the user is swiping more vertical than horizontal
-                    //Make values all positive so difference can be compared
-                    xDifference = Math.abs(xDifference);
-                    yDifference = Math.abs(yDifference);
-                    if (xDifference > yDifference) {
-                        if (users.size() > 0) {
-                            TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
-                            users.remove(0);
-                            if (users.size() > 1) {
-                                setUsers();
-                                Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                            } else {
-                                Log.d("PDBug", "onFling: " + "Reloading");
-                                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
-                                    @Override
-                                    public void onSuccess(JSONObject response) {
-                                            addUsers(response);
-                                    }
-
-                                    @Override
-                                    public void onFail(String msg) {
-
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-                //Swiping left
-                if (e1.getX() > e2.getX()) {
-                    Log.d("PDBug", "Swiping Left");
-                    float xDifference = e2.getX() - e1.getX();
-                    float yDifference = (float) 0.0;
-                    //If the user is swiping downwards
-                    if (e2.getY() > e1.getY()) {
-                        yDifference = e2.getY() - e1.getY();
-                        Log.d("PDBug", "Swiping down");
-                    }
-                    //Check if the user is swiping upwards
-                    if (e2.getY() < e1.getY()) {
-                        yDifference = e2.getY() - e1.getY();
-                        Log.d("PDBug", "Swiping up");
-
-                    }
-
-                    //Checks if the user is swiping more vertical than horizontal
-                    //Make values all positive so difference can be compared
-                    xDifference = Math.abs(xDifference);
-                    yDifference = Math.abs(yDifference);
-                    if (xDifference > yDifference) {
-                        if (users.size() > 0) {
-                            Log.d("PDBug", "onFling: " + users.get(0).getName());
-                            TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
-                            users.remove(0);
-                            Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                            if (users.size() > 1) {
-                                setUsers();
-                                Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                            } else {
-                                Log.d("PDBug", "onFling: " + "Reloading");
-                                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
-                                    @Override
-                                    public void onSuccess(JSONObject response) {
-                                        addUsers(response);
-                                    }
-
-                                    @Override
-                                    public void onFail(String msg) {
-
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
         });
     }
 

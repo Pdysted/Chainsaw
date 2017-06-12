@@ -10,7 +10,8 @@
     <ImageView
         android:id="@+id/userPicsView"
         android:layout_height="360dp"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:layout_marginTop="-30dp"/>
     <TextView
         android:id="@+id/userComplInfoView"
         android:layout_width="match_parent"

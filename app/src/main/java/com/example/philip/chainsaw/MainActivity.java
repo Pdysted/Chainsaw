@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     public static final String PREF_FILE_NAME = "savedToken";
     public static final String PREF_TOKEN = "Token";
+    public static final int USER_ACTIVITY = 3;
 
     String tinderToken;
     ArrayList<Rec> users;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAPoXtZA3SvsA8v7nl364oXRNfB25ruMM28uX76E0P0Fdn8HIgvS9hAUAk2H7MHCCk52SniRkJu1TZCwzl4aQiScH8bIdDg4cg0M48Uylwv6FhmOZAKZBggnMfxhdvmdVyZBMn9zPkV5d9GN6toXr8DQdmZAEUzBc4eB9zB3rq2uCTzwwgW0PcQM0B0c6SRYNZAj9Yt76pZCQlrUeDqoaz0hpJb6ZA0bcj5hj01RPsAxDmZBCK7MT9oLn4ZD";
+        String token = "EAAGm0PX4ZCpsBAOOAOtCarop4VJ4YAAQGU6A4OyFlmxihulodnzkatreR0wsisiZCKcWhqXaTWxGfivtkAZCpfayBYzX0VO2RsaRmriOp7KRYhZBeXYdo924tpuxrZAEtqX19tNh0lEfGH6VU9B5xXfjfasm614aXDdKJpKtNdWBjZA1YDqsMSCXTX30WZBa9Tt4J2ZCizA2Eqeek37K758VdRfyiSR8J7OBZCzSnvgW9UsQ4MHKKikVlDuZCgsVKlSqgZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("AGE", users.get(0).getAge());
                 i.putExtra("BIO", users.get(0).getBio());
                 i.putExtra("PHOTOS", users.get(0).getPhotoUrls());
-                startActivity(i);
+                startActivityForResult(i, USER_ACTIVITY);
                 return false;
             }
 
@@ -257,4 +258,17 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra("TINDER_TOKEN", tinderToken);
         startActivity(i);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == USER_ACTIVITY) {
+            if (resultCode == UserActivity.RESULT_OK) {
+                String selectedPic = data.getStringExtra("SELECTED_PIC");
+                Log.d("PDBug", "onActivityResult: "+selectedPic);
+                Picasso.with(getApplicationContext()).load(selectedPic).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
+            }
+        }
+    }
+
+
 }

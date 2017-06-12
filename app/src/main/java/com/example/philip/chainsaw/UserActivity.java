@@ -1,5 +1,6 @@
 package com.example.philip.chainsaw;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,6 +41,9 @@ public class UserActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
+                Intent chosenI = new Intent();
+                chosenI.putExtra("SELECTED_PIC", photoUrls.get(imageIndex));
+                setResult(UserActivity.RESULT_OK, chosenI);
                 finish();
                 return false;
             }

@@ -115,6 +115,14 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent chosenI = new Intent();
+        chosenI.putExtra("SELECTED_PIC", photoUrls.get(imageIndex));
+        setResult(UserActivity.RESULT_OK, chosenI);
+        finish();
+    }
+
     //TODO research possibility of showcasing user's instagram pics just as Tinder does
     //TODO research possibilty of integrating spotify music as well
     //TODO dots indicating number of pictures and and currently shown picture atm

@@ -2,32 +2,35 @@ package com.example.philip.chainsaw;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.StackView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.philip.chainsaw.adapters.RecStackAdapter;
 import com.example.philip.chainsaw.apis.TinderServiceVolley;
 import com.example.philip.chainsaw.interfaces.CallBack;
-import com.example.philip.chainsaw.model.Match;
 import com.example.philip.chainsaw.model.Rec;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -35,32 +38,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+import link.fls.swipestack.SwipeStack;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String PREF_FILE_NAME = "savedToken";
+    public static final String PREF_TOKEN = "Token";
+    public static final int USER_ACTIVITY = 3;
+    private final int id = 1260393877;
+
     private ImageView profilePic;
     private TextView userInfo;
     private ImageButton messagesButton;
     private LinearLayout profileLayout;
-
-    private int id = 1260393877;
-    private SharedPreferences preferences;
-    public static final String PREF_FILE_NAME = "savedToken";
-    public static final String PREF_TOKEN = "Token";
-    public static final int USER_ACTIVITY = 3;
-
-    private float layoutX;
-    private float layoutY;
-    float dX, dY;
-    String tinderToken;
-    ArrayList<Rec> users;
-
+    private SwipeStack profileStack;
     private GestureDetector gestureDetector;
+
+    private SharedPreferences preferences;
+
+    private String tinderToken;
+    private ArrayList<Rec> users;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         profilePic = (ImageView) findViewById(R.id.userPicView);
         userInfo = (TextView) findViewById(R.id.userInfoView);
         profilePic.setOnTouchListener(new View.OnTouchListener() {
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBADo2dr0R7j2O6pIZAYY7NS7xayTGfBZCw22ZByQldpvtuXxtY2zaqnffonsgUWorZBB1XuqE8PGCvMx2HohmIYURIBgBy66FzhLgDKUgiAn5ksr8aIYMbEngWZCnQsNwOLCXQplc4OUDjg4rGnZACFIh9ubZBYsXR8mRt46IHJTw98xkKhGvwm8R33Y4yxqjcbkZBkZCehrXANh1g3XfMdXaUWYDTqb4KFucpuIeWtyt4lklRtZBzZCrdIZD";
+        String token = "EAAGm0PX4ZCpsBAIGKJ0KQTQJWPtv6IiU1jHLqiqptFJzRVVFatPtz8lzZC0k3LqZC1uMERgppEyum3NIvD9qCFdHajTkp0RbiVbq3RhgVW871O7AehWTnGpbuN53vsRM071ulGn4VXZCxGKVD8s5xU621ZCv59SlCepgIVZCwrtfTzTTXUTEhytcIanxYGBPxAfhpUdKZABMCQqNIGKVWW2NyBjnnxEvmaRZBukdPLCee60w3F0ZCkXrmHMLADdL3ruIZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -103,93 +108,54 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
             }
         });
-        profileLayout = (LinearLayout) findViewById(R.id.ss);
-        layoutX = profileLayout.getX();
-        layoutY = profileLayout.getY();
-        profileLayout.setZ(-1);
-        //TODO using a stacked stackview and having multiple layouts stacked would allow to "remove" it instead of the animation going back
-        profileLayout.setOnTouchListener(new View.OnTouchListener() {
-                                      @Override
-                                      public boolean onTouch(View view, MotionEvent event) {
+        profileStack = (SwipeStack) findViewById(R.id.profileStackView);
+        profileStack.setZ(-1);
+        profileStack.setListener(new SwipeStack.SwipeStackListener() {
+            @Override
+            public void onViewSwipedToLeft(int position) {
+                Log.d("PDBug", "onViewSwipedToLeft: ");
+                TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
+                users.remove(0);
+            }
 
-                                          switch (event.getAction()) {
+            @Override
+            public void onViewSwipedToRight(int position) {
+                if (users.size() > 0) {
+                    Log.d("PDBug", "onViewSwipedToRight: ");
+                    TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
+                    users.remove(0);
+                    }
+                }
 
+            @Override
+            public void onStackEmpty() {
+                Log.d("PDBug", "onStackEmpty: " + "Reloading");
+                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        addUsers(response);
+                    }
 
-                                              case MotionEvent.ACTION_DOWN:
-                                                  dX = view.getX() - event.getRawX();
-                                                  break;
+                    @Override
+                    public void onFail(String msg) {
 
-                                              case MotionEvent.ACTION_MOVE:
-
-                                                  view.animate()
-                                                          .x(event.getRawX() + dX)
-                                                          .setDuration(0)
-                                                          .start();
-
-                                                  int viewX = (int)view.getX();
-                                                  if (viewX > 240) {
-                                                      Log.d("PDBug", "onTouch: right");
-                                                      view.animate().x(layoutX+35).setDuration(100).start();
-                                                      if (users.size() > 0) {
-                                                          TinderServiceVolley.getInstance(getApplicationContext()).likeUser(users.get(0).get_id(), tinderToken);
-                                                          users.remove(0);
-                                                          if (users.size() > 1) {
-                                                              setUsers();
-                                                              Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                                                          } else {
-                                                              Log.d("PDBug", "onFling: " + "Reloading");
-                                                              TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
-                                                                  @Override
-                                                                  public void onSuccess(JSONObject response) {
-                                                                      addUsers(response);
-                                                                  }
-
-                                                                  @Override
-                                                                  public void onFail(String msg) {
-
-                                                                  }
-                                                              });
-                                                          }
-                                                      }
-                                                  }
-                                                  if (viewX < -240) {
-                                                      Log.d("PDBug", "onTouch: left");
-                                                      view.animate().x(layoutX+35).setDuration(100).start();
-                                                      if (users.size() > 0) {
-                                                          Log.d("PDBug", "onFling: " + users.get(0).getName());
-                                                          TinderServiceVolley.getInstance(getApplicationContext()).passUser(users.get(0).get_id(), tinderToken);
-                                                          users.remove(0);
-                                                          if (users.size() > 1) {
-                                                              setUsers();
-                                                              Log.d("PDBug", "onFlingNext: " + users.get(0).getName());
-                                                          } else {
-                                                              Log.d("PDBug", "onFling: " + "Reloading");
-                                                              TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
-                                                                  @Override
-                                                                  public void onSuccess(JSONObject response) {
-                                                                      addUsers(response);
-                                                                  }
-
-                                                                  @Override
-                                                                  public void onFail(String msg) {
-
-                                                                  }
-                                                              });
-                                                          }
-                                                      }
-                                                  }
-                                                  break;
-                                              case MotionEvent.ACTION_UP:
-                                                  //view.animate().x(layoutX+35).setDuration(100).start();
-                                                  break;
-                                              default:
-                                                  view.animate().x(layoutX+35).setDuration(100).start();
-                                                  return false;
-                                          }
-                                          return true;
-                                      }
-
-        } );
+                    }
+                });
+                Toast.makeText(MainActivity.this, "Loading new recommendations..", Toast.LENGTH_SHORT).show();
+            }
+        });
+        profileStack.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent i = new Intent(getApplicationContext(), UserActivity.class);
+                i.putExtra("NAME", users.get(0).getName());
+                i.putExtra("AGE", users.get(0).getAge());
+                i.putExtra("BIO", users.get(0).getBio());
+                i.putExtra("PHOTOS", users.get(0).getPhotoUrls());
+                startActivityForResult(i, USER_ACTIVITY);
+                return false;
+            }
+        });
 
         Log.d("PDBug", "onCreate: "+tinderToken);
 
@@ -215,7 +181,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(PREF_TOKEN, tinderToken);
         editor.apply();
         Log.d("PDBug", "setToken: " + token);
+
     }
+
 
     public void addUsers(JSONObject jsonResponse) {
         try {
@@ -245,10 +213,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setUsers() {
-        Rec firstRec = users.get(0);
-        Picasso.with(getApplicationContext()).load(firstRec.getPhotoUrls().get(0)).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
-        userInfo.setText(firstRec.getName() + " " + firstRec.getAge());
-        firstRec.getAge();
+        RecStackAdapter recAdapt = new RecStackAdapter(getApplicationContext(), R.layout.rec_stack_item, users);
+        profileStack.setAdapter(recAdapt);
+        recAdapt.notifyDataSetChanged();
         Log.d("PDBug", "setUsers: "+users.size());
     }
 

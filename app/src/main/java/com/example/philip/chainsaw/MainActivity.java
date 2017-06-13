@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         });
         profileStack = (SwipeStack) findViewById(R.id.profileStackView);
         profileStack.setZ(-1);
+        //Write own derived listener from swipestack as it does not check for tap on the picture
         profileStack.setListener(new SwipeStack.SwipeStackListener() {
             @Override
             public void onViewSwipedToLeft(int position) {
@@ -144,18 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Loading new recommendations..", Toast.LENGTH_SHORT).show();
             }
         });
-        profileStack.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Intent i = new Intent(getApplicationContext(), UserActivity.class);
-                i.putExtra("NAME", users.get(0).getName());
-                i.putExtra("AGE", users.get(0).getAge());
-                i.putExtra("BIO", users.get(0).getBio());
-                i.putExtra("PHOTOS", users.get(0).getPhotoUrls());
-                startActivityForResult(i, USER_ACTIVITY);
-                return false;
-            }
-        });
+
 
         Log.d("PDBug", "onCreate: "+tinderToken);
 
@@ -198,9 +188,11 @@ public class MainActivity extends AppCompatActivity {
                     photosUrls.add(photoJson.getString("url"));
                     //Log.d("PDBug", "photoArray: " + photoJson.getString("url"));
                 }
-                Log.d("PDBug", "addUsers: "+jsonObj.getString("birth_date"));
+                //Log.d("PDBug", "addUsers: "+jsonObj.getString("birth_date"));
                 Date birthDay = df.parse(jsonObj.getString("birth_date"));
-                Rec user = new Rec(jsonObj.getInt("distance_mi"), jsonObj.getString("_id"), jsonObj.getString("bio"),
+                String bio = "";
+                bio = jsonObj.getString("bio");
+                Rec user = new Rec(jsonObj.getInt("distance_mi"), jsonObj.getString("_id"), bio,
                         birthDay, jsonObj.getInt("gender"), jsonObj.getString("name"), photosUrls);
                 users.add(user);
             }

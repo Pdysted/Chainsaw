@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.example.philip.chainsaw.adapters.MatchAdapter;
 import com.example.philip.chainsaw.apis.TinderServiceRetrofit;
@@ -36,6 +37,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MessagesActivity extends AppCompatActivity {
+    private RelativeLayout loadingLayout;
     private EditText searchField;
     private ListView lw;
 
@@ -62,6 +64,7 @@ public class MessagesActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        loadingLayout = (RelativeLayout) findViewById(R.id.loadingLayout);
         tinderToken = getIntent().getStringExtra("TINDER_TOKEN");
         matches = new ArrayList<>();
         TinderServiceVolley.getInstance(getApplicationContext()).getMessages(tinderToken, new CallBack() {
@@ -165,6 +168,8 @@ public class MessagesActivity extends AppCompatActivity {
                         matches.get(iterator).setPhotoUrl(photoUrl);
                         if (iterator == (matches.size()-1)) {
                             searchField.setEnabled(true);
+
+                            loadingLayout.setVisibility(View.GONE);
                             mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
                             mAdapter.registerDataSetObserver(new DataSetObserver() {
                                 @Override

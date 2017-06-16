@@ -43,6 +43,25 @@
         android:hint="Search"
         android:enabled="false"/>
     </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        />
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/progressBar"
+         android:layout_centerHorizontal="true"
+         android:text="Loading matches..."
+         />
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/messageList"

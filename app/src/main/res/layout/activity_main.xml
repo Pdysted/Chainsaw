@@ -37,6 +37,7 @@
         android:rotation="0"
         android:padding="0dp"
         app:stack_size="2"
+        app:paddingEnd="1dp"
         app:stack_rotation="0"/>
 
     <LinearLayout

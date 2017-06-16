@@ -2,11 +2,15 @@ package com.example.philip.chainsaw;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.inputmethodservice.Keyboard;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.philip.chainsaw.adapters.MatchAdapter;
@@ -32,7 +36,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MessagesActivity extends AppCompatActivity {
+    private EditText searchField;
     private ListView lw;
+
     private String tinderToken;
     MatchAdapter mAdapter;
     private ArrayList<Match> matches;
@@ -69,8 +75,25 @@ public class MessagesActivity extends AppCompatActivity {
 
             }
         });
+        searchField = (EditText) findViewById(R.id.search_field);
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        Retrofit builder = new Retrofit.Builder().baseUrl("https://api.gotinder.com/")
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                searchMatches(s.toString());
+            }
+        });
+
+        /*Retrofit builder = new Retrofit.Builder().baseUrl("https://api.gotinder.com/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
         TinderServiceRetrofit tsr = builder.create(TinderServiceRetrofit.class);
@@ -86,7 +109,7 @@ public class MessagesActivity extends AppCompatActivity {
             public void onFailure(Call<List<Match>> call, Throwable t) {
 
             }
-        });
+        });*/
 
 
     }
@@ -140,6 +163,9 @@ public class MessagesActivity extends AppCompatActivity {
                         String photoUrl = "http://images.gotinder.com/" + matches.get(iterator).getUserId() + "/" + photosArray.getJSONObject(0).getString("fileName");
                         matches.get(iterator).setName(name);
                         matches.get(iterator).setPhotoUrl(photoUrl);
+                        if (iterator == (matches.size()-1)) {
+                            searchField.setEnabled(true);
+                        }
                         //Log.d("PDBug", "onResponsephotourl: "+photoUrl);
                     } catch (JSONException ex) {
                         Log.d("PDBug", "addUser: "+ex.getLocalizedMessage());
@@ -164,8 +190,21 @@ public class MessagesActivity extends AppCompatActivity {
         lw.setAdapter(mAdapter);
     }
 
-    public void addUser(JSONObject response) {
-
+    public void searchMatches(String search) {
+        ArrayList<Match> searchResults = new ArrayList<>();
+        for (int i = 0; i < matches.size(); i++) {
+            String name = matches.get(i).getName();
+            if (search.length() < name.length()) {
+                //Doesn't match the last letter when writing full name ie. nanna will only show up till nann
+                String subName = name.substring(0, search.length());
+                if (search.equalsIgnoreCase(subName)) {
+                    Log.d("PDBug", "searchMatches: " + matches.get(i).getName());
+                    searchResults.add(matches.get(i));
+                }
+            }
+        }
+        mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, searchResults);
+        lw.setAdapter(mAdapter);
     }
 
     public void update() {

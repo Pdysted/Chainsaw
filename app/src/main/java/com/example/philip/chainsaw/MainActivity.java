@@ -191,7 +191,9 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("PDBug", "addUsers: "+jsonObj.getString("birth_date"));
                 Date birthDay = df.parse(jsonObj.getString("birth_date"));
                 String bio = "";
-                bio = jsonObj.getString("bio");
+                if (jsonObj.has("bio")) {
+                    bio = jsonObj.getString("bio");
+                }
                 Rec user = new Rec(jsonObj.getInt("distance_mi"), jsonObj.getString("_id"), bio,
                         birthDay, jsonObj.getInt("gender"), jsonObj.getString("name"), photosUrls);
                 users.add(user);

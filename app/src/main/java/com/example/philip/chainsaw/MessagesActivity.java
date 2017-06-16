@@ -165,6 +165,14 @@ public class MessagesActivity extends AppCompatActivity {
                         matches.get(iterator).setPhotoUrl(photoUrl);
                         if (iterator == (matches.size()-1)) {
                             searchField.setEnabled(true);
+                            mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
+                            mAdapter.registerDataSetObserver(new DataSetObserver() {
+                                @Override
+                                public void onChanged() {
+                                    update();
+                                }
+                            });
+                            lw.setAdapter(mAdapter);
                         }
                         //Log.d("PDBug", "onResponsephotourl: "+photoUrl);
                     } catch (JSONException ex) {
@@ -177,25 +185,15 @@ public class MessagesActivity extends AppCompatActivity {
 
                 }
             });
-            if (i == (matches.size()-1)) {
-                mAdapter = new MatchAdapter(getApplicationContext(), R.layout.match_item, matches);
-            }
         }
-        mAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                update();
-            }
-        });
-        lw.setAdapter(mAdapter);
+
     }
 
     public void searchMatches(String search) {
         ArrayList<Match> searchResults = new ArrayList<>();
         for (int i = 0; i < matches.size(); i++) {
             String name = matches.get(i).getName();
-            if (search.length() < name.length()) {
-                //Doesn't match the last letter when writing full name ie. nanna will only show up till nann
+            if (search.length() <= name.length()) {
                 String subName = name.substring(0, search.length());
                 if (search.equalsIgnoreCase(subName)) {
                     Log.d("PDBug", "searchMatches: " + matches.get(i).getName());

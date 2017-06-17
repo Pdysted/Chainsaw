@@ -95,26 +95,6 @@ public class MessagesActivity extends AppCompatActivity {
                 searchMatches(s.toString());
             }
         });
-
-        /*Retrofit builder = new Retrofit.Builder().baseUrl("https://api.gotinder.com/")
-                .addConverterFactory(GsonConverterFactory.create()).build();
-
-        TinderServiceRetrofit tsr = builder.create(TinderServiceRetrofit.class);
-
-        Call<List<Match>> matches = tsr.getMessages("octocat");
-        matches.enqueue(new Callback<List<Match>>() {
-            @Override
-            public void onResponse(Call<List<Match>> call, Response<List<Match>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Match>> call, Throwable t) {
-
-            }
-        });*/
-
-
     }
 
     public void addMatches(JSONObject response) {
@@ -127,7 +107,6 @@ public class MessagesActivity extends AppCompatActivity {
                     //Build messages here
                     JSONObject messageJson = messagesJson.getJSONObject(j);
                     Date date = new Date(messageJson.getLong("timestamp"));
-
                     Message message = new Message(messageJson.getString("from"), messageJson.getString("message"), date);
                     messages.add(message);
                 }
@@ -179,7 +158,6 @@ public class MessagesActivity extends AppCompatActivity {
                             });
                             lw.setAdapter(mAdapter);
                         }
-                        //Log.d("PDBug", "onResponsephotourl: "+photoUrl);
                     } catch (JSONException ex) {
                         Log.d("PDBug", "addUser: "+ex.getLocalizedMessage());
                     }

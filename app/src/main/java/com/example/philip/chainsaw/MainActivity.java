@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int USER_ACTIVITY = 3;
     private final int id = 1260393877;
 
-    private ImageView profilePic;
-    private TextView userInfo;
-    private LinearLayout profileLayout;
     private SwipeStack profileStack;
     private GestureDetector gestureDetector;
     private ProgressBar recsProgressBar;
@@ -69,22 +66,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        profilePic = (ImageView) findViewById(R.id.userPicView);
-        userInfo = (TextView) findViewById(R.id.userInfoView);
-        profilePic.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                gestureDetector.onTouchEvent(event);
-                return true;
-            }
-        });
         recsProgressBar = (ProgressBar) findViewById(R.id.progressBarRecs);
         recsProgressText = (TextView) findViewById(R.id.progressTextRecs);
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBANNBeLgqq3jG6tZAdcY937OfERN1owV5E0tPstC4DXpsTndzuVZA0ZAZAFPtwMSUcXZBJ3jxy8HHQRaZBicdFiRmqhQwDZBFZC2EyDbcIqVJhYtjmvM3TQLE361d7ddLZAQ6XxnCZBoELnynPNtoFBZCegcbxVZAYDFoewPz9wpQqU9Ulgb2S5CxEvfDoFwqNZC5HjxC3uqpZBYQCh0qR1j5umUZAW1vnrGY9cDOZA8yHso9NpVHkcc6ZA6DcuZBUZD";
+        String token = "EAAGm0PX4ZCpsBAIKBVSXEh09JAkz9nOyf7FzsvHxwoRGsCUR4mSECJkmHZAyvhj0i9v3rNpj9DEZBeDEhktHvdCVM4SoAARrNLUVXpTJpiwkqtIMQjsxXAeMTSriZCZB49AgdWesZALKLXrjpXItCZCk8fZChuwtIvUMJfl9OaxmdX7n1ZAXRsHYqq8zZBnKlBFhZCPiSH9BIYn0aUr38DzQDFOsNTeMxpeWZCPf5RR6wKdapnDF6eZAVPnL8Cr3fSkDhjCoZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -129,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Tinder authentication token expired", Toast.LENGTH_LONG);
                     }
                 });
-
             }
         });
         profileStack = (SwipeStack) findViewById(R.id.profileStackView);
@@ -171,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 });
                 recsProgressBar.setVisibility(View.VISIBLE);
                 recsProgressText.setVisibility(View.VISIBLE);
-                //Toast.makeText(MainActivity.this, "Loading new recommendations..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -203,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public void addUsers(JSONObject jsonResponse) {
         try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -215,9 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int j = 0; j < photosArray.length(); j++) {
                     JSONObject photoJson = photosArray.getJSONObject(j);
                     photosUrls.add(photoJson.getString("url"));
-                    //Log.d("PDBug", "photoArray: " + photoJson.getString("url"));
                 }
-                //Log.d("PDBug", "addUsers: "+jsonObj.getString("birth_date"));
                 Date birthDay = df.parse(jsonObj.getString("birth_date"));
                 String bio = "";
                 if (jsonObj.has("bio")) {
@@ -239,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
         RecStackAdapter recAdapt = new RecStackAdapter(getApplicationContext(), R.layout.rec_stack_item, users);
         profileStack.setAdapter(recAdapt);
         recAdapt.notifyDataSetChanged();
-
         Log.d("PDBug", "setUsers: "+users.size());
     }
 
@@ -255,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == UserActivity.RESULT_OK) {
                 String selectedPic = data.getStringExtra("SELECTED_PIC");
                 Log.d("PDBug", "onActivityResult: "+selectedPic);
-                Picasso.with(getApplicationContext()).load(selectedPic).transform(new RoundedCornersTransformation(10, 10)).into(profilePic);
             }
         }
     }

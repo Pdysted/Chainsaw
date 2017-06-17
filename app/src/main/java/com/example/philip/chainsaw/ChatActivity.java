@@ -27,7 +27,6 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView headerPic;
     private TextView headerName;
     private EditText messageField;
-    private ImageButton sendMessageButton;
     private ListView lw;
 
     private final String ownId = "58cb16dd5ac3aa7e03bc6b12";
@@ -43,7 +42,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         messageField = (EditText) findViewById(R.id.messageFieldET);
-        sendMessageButton = (ImageButton) findViewById(R.id.sendMessageBtn);
         headerName = (TextView) findViewById(R.id.chatMatchNameTW);
         headerPic = (ImageView) findViewById(R.id.chatHeader_picIW);
         tinderToken = getIntent().getStringExtra("TINDER_TOKEN");
@@ -55,7 +53,6 @@ public class ChatActivity extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(photoUrl).into(headerPic);
         Log.d("PDBug", "onCreate: "+name + " " + photoUrl);
         Log.d("PDBug", "onCreate: "+messages.size());
-
         lw = (ListView) findViewById(R.id.chatList);
         mAdapter = new MessageAdapter(getApplicationContext(), R.layout.message_item, messages, photoUrl);
         mAdapter.registerDataSetObserver(new DataSetObserver() {
@@ -74,18 +71,14 @@ public class ChatActivity extends AppCompatActivity {
         messages.add(message);
         mAdapter.notifyDataSetChanged();
         messageField.setText("");
+        /*try {
+            TinderServiceVolley.getInstance(getApplicationContext()).sendMessage(matchId, tinderToken, text);
+        } catch (JSONException e) {
+            Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
+        }*/
         Log.d("PDBug", "sendMessage: ");
     }
 
-    /*public void sendMessage(View v) {
-        TinderServiceVolley tsv = new TinderServiceVolley(getApplicationContext());
-        String message = messageField.getText().toString();
-        try {
-            tsv.sendMessage(matchId, tinderToken, message);
-        } catch (JSONException e) {
-            Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
-        }
-    }*/
     public void update() {
         lw.setAdapter(mAdapter);
         lw.setSelection(mAdapter.getCount()-1);

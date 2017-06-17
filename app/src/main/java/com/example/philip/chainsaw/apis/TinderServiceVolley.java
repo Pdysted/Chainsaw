@@ -94,7 +94,7 @@ public class TinderServiceVolley {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                onCallBack.onFail("d");
             }
         }) {
             @Override

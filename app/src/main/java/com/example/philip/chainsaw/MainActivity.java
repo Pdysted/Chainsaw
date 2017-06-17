@@ -106,6 +106,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFail(String msg) {
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                //Try with the previous acquired token from tinder in the database
+                TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        addUsers(response);
+                    }
+
+                    @Override
+                    public void onFail(String msg) {
+                        Toast.makeText(getApplicationContext(), "Tinder authentication token expired", Toast.LENGTH_LONG);
+                    }
+                });
+
             }
         });
         profileStack = (SwipeStack) findViewById(R.id.profileStackView);

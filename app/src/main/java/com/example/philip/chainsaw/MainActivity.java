@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.StackView;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 import java.text.DateFormat;
@@ -50,10 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView profilePic;
     private TextView userInfo;
-    private ImageButton messagesButton;
     private LinearLayout profileLayout;
     private SwipeStack profileStack;
     private GestureDetector gestureDetector;
+    private ProgressBar recsProgressBar;
+    private TextView recsProgressText;
+
 
     private SharedPreferences preferences;
 
@@ -75,10 +79,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        recsProgressBar = (ProgressBar) findViewById(R.id.progressBarRecs);
+        recsProgressText = (TextView) findViewById(R.id.progressTextRecs);
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAAgOOES3hpGY03n8cd1pAQWY4ZCf9nYkbBuvyl8PTAmjZA7mYCMBTPUnvE2lua7DQqQL9YsRIzJqqcqn9ccrrsjVkSngbTWZCZAML9Rg5nSqUiAHsiciHTufslFXghR8SdeDGtFZCyO9fwCzeqZBJ4oht2iIl7urSfwEYuJBKZBabeZAZARU5my2VZAScyxcXv1rhAGfw3DB8DzZAUkx6gKLGcr7zOEvicriSZCx4JjbocZCmQKoq35PT51UZD";
+        String token = "EAAGm0PX4ZCpsBANNBeLgqq3jG6tZAdcY937OfERN1owV5E0tPstC4DXpsTndzuVZA0ZAZAFPtwMSUcXZBJ3jxy8HHQRaZBicdFiRmqhQwDZBFZC2EyDbcIqVJhYtjmvM3TQLE361d7ddLZAQ6XxnCZBoELnynPNtoFBZCegcbxVZAYDFoewPz9wpQqU9Ulgb2S5CxEvfDoFwqNZC5HjxC3uqpZBYQCh0qR1j5umUZAW1vnrGY9cDOZA8yHso9NpVHkcc6ZA6DcuZBUZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -93,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                            addUsers(response);
+                        recsProgressBar.setVisibility(View.GONE);
+                        recsProgressText.setVisibility(View.GONE);
+                        addUsers(response);
                     }
 
                     @Override
@@ -110,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
                     public void onSuccess(JSONObject response) {
+
+                        recsProgressBar.setVisibility(View.GONE);
+                        recsProgressText.setVisibility(View.GONE);
                         addUsers(response);
                     }
 
@@ -123,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
         });
         profileStack = (SwipeStack) findViewById(R.id.profileStackView);
         profileStack.setZ(-1);
-        //Write own derived listener from swipestack as it does not check for tap on the picture
+        //Unable to add a onTouch listener as the swipe listener intercepts the check
+        //Github page is working on the issue
         profileStack.setListener(new SwipeStack.SwipeStackListener() {
             @Override
             public void onViewSwipedToLeft(int position) {
@@ -147,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
                     public void onSuccess(JSONObject response) {
+                        recsProgressBar.setVisibility(View.GONE);
+                        recsProgressText.setVisibility(View.GONE);
                         addUsers(response);
                     }
 
@@ -155,7 +169,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-                Toast.makeText(MainActivity.this, "Loading new recommendations..", Toast.LENGTH_SHORT).show();
+                recsProgressBar.setVisibility(View.VISIBLE);
+                recsProgressText.setVisibility(View.VISIBLE);
+                //Toast.makeText(MainActivity.this, "Loading new recommendations..", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -223,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         RecStackAdapter recAdapt = new RecStackAdapter(getApplicationContext(), R.layout.rec_stack_item, users);
         profileStack.setAdapter(recAdapt);
         recAdapt.notifyDataSetChanged();
+
         Log.d("PDBug", "setUsers: "+users.size());
     }
 

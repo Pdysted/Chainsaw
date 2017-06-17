@@ -29,22 +29,43 @@
             android:background="#01000000"/>
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/recsLoadingLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/header_bar">
+        <ProgressBar
+            android:id="@+id/progressBarRecs"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:id="@+id/progressTextRecs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progressBarRecs"
+            android:layout_centerHorizontal="true"
+            android:text="Loading Recommendations.."
+            />
     <link.fls.swipestack.SwipeStack
         android:id="@+id/profileStackView"
-        android:layout_below="@id/header_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rotation="0"
         android:padding="0dp"
-        app:stack_size="2"
-        app:paddingEnd="1dp"
+        app:stack_size="3"
+        app:stack_spacing="1dp"
         app:stack_rotation="0"/>
+        </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/pictureLayout"
         android:orientation="vertical"
-        android:layout_marginLeft="10pt"
-        android:layout_below="@id/profileStackView"
+        android:layout_marginStart="10pt"
+        android:layout_below="@id/recsLoadingLayout"
         android:layout_width="280dp"
         android:layout_height="wrap_content" >
 

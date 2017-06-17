@@ -58,7 +58,7 @@ public class MessagesActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), ChatActivity.class);
                 i.putExtra("TINDER_TOKEN", tinderToken);
                 i.putExtra("NAME", m.getName());
-                i.putExtra("MATCH_ID", m.getUserId());
+                i.putExtra("MATCH_ID", m.getMatchId());
                 i.putExtra("PHOTO_URL", m.getPhotoUrl());
                 i.putExtra("MESSAGES", m.getMessages());
                 startActivity(i);
@@ -113,12 +113,13 @@ public class MessagesActivity extends AppCompatActivity {
                 //Matches are sorted depending on who likes first
                 //Check for my id within the first 24 characters and substring accordingly
                 String matchId = matchesJson.getJSONObject(i).getString("_id");
+                String userId;
                 if (matchId.substring(0, 24).equals("58cb16dd5ac3aa7e03bc6b12")) {
-                    matchId = matchId.substring(24, 48);
+                    userId = matchId.substring(24, 48);
                 } else {
-                    matchId = matchId.substring(0, 24);
+                    userId = matchId.substring(0, 24);
                 }
-                Match match = new Match(matchId, messages);
+                Match match = new Match(userId, matchId, messages);
                 matches.add(match);
                 //Log.d("PDBug", "onResponseUserID: "+match.getUserId() + " length" + match.getUserId().length());
                 //Scalable only 10 at a time and dynamically add to the adapter?

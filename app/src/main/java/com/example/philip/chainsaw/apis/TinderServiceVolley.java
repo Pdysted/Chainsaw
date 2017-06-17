@@ -224,7 +224,7 @@ public class TinderServiceVolley {
     }
 
     public void sendMessage(final String matchId, final String tinderToken, final String message) throws JSONException {
-        String url = "https://api.gotinder.com/user/matches/582217b3b9de8ec50a5033a0";
+        String url = "https://api.gotinder.com/user/matches/"+matchId;
         JSONObject messageJson = new JSONObject();
         messageJson.put("message", message);
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.POST, url, messageJson, new Response.Listener<JSONObject>() {
@@ -239,7 +239,9 @@ public class TinderServiceVolley {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("PDBug", "onErrorResponse: "+error.getMessage());
+                Log.d("PDBug", "onErrorResponse: "+error.getMessage()+"\n"+error.getStackTrace() +" "+ error.getLocalizedMessage()+
+                error.toString());
+
             }
         })
         {

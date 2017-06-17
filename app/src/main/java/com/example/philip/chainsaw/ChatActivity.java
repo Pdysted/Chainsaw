@@ -71,12 +71,11 @@ public class ChatActivity extends AppCompatActivity {
         messages.add(message);
         mAdapter.notifyDataSetChanged();
         messageField.setText("");
-        /*try {
+        try {
             TinderServiceVolley.getInstance(getApplicationContext()).sendMessage(matchId, tinderToken, text);
         } catch (JSONException e) {
-            Log.d("PDbug", "sendMessage: "+ e.getLocalizedMessage());
-        }*/
-        Log.d("PDBug", "sendMessage: ");
+            Log.d("PDBug", "sendMessage: "+ e.getLocalizedMessage());
+        }
     }
 
     public void update() {

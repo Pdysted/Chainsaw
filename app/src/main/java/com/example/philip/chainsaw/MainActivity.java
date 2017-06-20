@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         tinderToken = preferences.getString(PREF_TOKEN, "");
         users = new ArrayList<>();
-        String token = "EAAGm0PX4ZCpsBAIKBVSXEh09JAkz9nOyf7FzsvHxwoRGsCUR4mSECJkmHZAyvhj0i9v3rNpj9DEZBeDEhktHvdCVM4SoAARrNLUVXpTJpiwkqtIMQjsxXAeMTSriZCZB49AgdWesZALKLXrjpXItCZCk8fZChuwtIvUMJfl9OaxmdX7n1ZAXRsHYqq8zZBnKlBFhZCPiSH9BIYn0aUr38DzQDFOsNTeMxpeWZCPf5RR6wKdapnDF6eZAVPnL8Cr3fSkDhjCoZD";
+        String token = "EAAGm0PX4ZCpsBAHvkE3PZBIa86cztaJPQOED64eYGutB9kmD1ZB1RCMZAkQEW0bNMTJ1fz3ZAB2KIdFZAUtrc0i4Kxw7AcSyTO5zrFMLerI1mfNbEWOqDcvjG57pXFFVRCNYE4V5p5Rc1eQH8BWoUAO4YJorGn3oKMFFS3trpJeHq2AhIiB4YbBS6DdcU8ZBnNzt6P1qTQNCZBAMR2KS7jk705BhzYZASLLfSk75C4ABtwemeiPF7z3phOYohKVQeQ1EZD";
         TinderServiceVolley.getInstance(getApplicationContext()).auth(id, token, new CallBack() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 TinderServiceVolley.getInstance(getApplicationContext()).getRecs(tinderToken, new CallBack() {
                     @Override
                     public void onSuccess(JSONObject response) {
-
                         recsProgressBar.setVisibility(View.GONE);
                         recsProgressText.setVisibility(View.GONE);
                         addUsers(response);
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         profileStack = (SwipeStack) findViewById(R.id.profileStackView);
         profileStack.setZ(-1);
         //Unable to add a onTouch listener as the swipe listener intercepts the check
-        //Github page is working on the issue
+        //GitHub page is working on the issue
         profileStack.setListener(new SwipeStack.SwipeStackListener() {
             @Override
             public void onViewSwipedToLeft(int position) {

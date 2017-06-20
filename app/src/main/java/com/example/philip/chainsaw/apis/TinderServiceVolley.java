@@ -195,7 +195,6 @@ public class TinderServiceVolley {
     }
 
     public void getUser(final Match match, final String tinderToken, final CallBack onCallBack) {
-        //userId = "582217b3b9de8ec50a5033a0";
         String url = "https://api.gotinder.com/user/" + match.getUserId();
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override

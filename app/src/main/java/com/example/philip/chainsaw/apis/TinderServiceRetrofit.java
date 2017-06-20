@@ -31,22 +31,27 @@ public interface TinderServiceRetrofit {
 
     //Tinder calls
     //Insert user model
+    //Requires a JSON deserializer
     @POST("auth")
     Call<Response> authUser(@Query("facebook_token") String accessToken, @Query("facebook_id") String facebookId);
 
     @GET("user/recs")
-    Call<List<Post>> getRecs();
+    Call<List<Post>> getRecs(@Header("X-Auth-Token") String tinderToken);
 
-    //Might be get method
-    @POST("like|pass/{_id}")
-    Call<Response> likeUser(@Path("_id") String id);
 
-    @POST("pass/{_id}")
-    Call<ResponseBody> passUser(@Path("_id") String id);
+    //These two could be merged to one method using the curly brackets at like or pass as with the id
+    //Is it worth it?
+    @GET("like/{_id}")
+    Call<Response> likeUser(@Header("X-Auth-Token") String tinderToken, @Path("_id") String id);
+
+    @GET("pass/{_id}")
+    Call<ResponseBody> passUser(@Header("X-Auth-Token") String tinderToken, @Path("_id") String id);
+    //
 
     @POST("updates")
     Call<List<Match>> getMessages(@Header("X-Auth-Token") String tinderToken);
 
+    //How to initialise the retrofit solution
      /*Retrofit builder = new Retrofit.Builder().baseUrl("https://api.gotinder.com/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
 
